@@ -1,7 +1,7 @@
 {
   "publisher": "yuns",
-  "name": "ext-name",
-  "displayName": "ext-name",
+  "name": "links",
+  "displayName": "Links",
   "version": "0.0.0",
   "private": true,
   "packageManager": "pnpm@8.10.5",
@@ -9,13 +9,13 @@
   "author": "Yuns <yuns.xie@qq.com>",
   "license": "MIT",
   "funding": "https://opencollective.com/yunsii",
-  "homepage": "https://github.com/yunsii/ext-name#readme",
+  "homepage": "https://github.com/yunsii/vscode-links#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yunsii/ext-name"
+    "url": "https://github.com/yunsii/vscode-links"
   },
   "bugs": {
-    "url": "https://github.com/yunsii/ext-name/issues"
+    "url": "https://github.com/yunsii/vscode-links/issues"
   },
   "sponsor": {
     "url": "https://opencollective.com/yunsii"
@@ -34,6 +34,41 @@
   "activationEvents": [
     "onStartupFinished"
   ],
+  "contributes": {
+    "configuration": {
+      "title": "Links",
+      "properties": {
+        "links.resources": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": ["url", "title"],
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "Specific URL"
+              },
+              "title": {
+                "type": "string",
+                "description": "Title of specific URL"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of specific URL"
+              }
+            }
+          }
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "links.open",
+        "title": "Links Open ..."
+      }
+    ]
+  },
   "scripts": {
     "build": "tsup src/index.ts --external vscode",
     "dev": "nr build --watch",
