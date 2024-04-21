@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "private": true,
   "packageManager": "pnpm@8.10.5",
-  "description": "",
+  "description": "Pursue better UX for project links",
   "author": "Yuns <yuns.xie@qq.com>",
   "license": "MIT",
   "funding": "https://opencollective.com/yunsii",
