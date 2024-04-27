@@ -98,7 +98,7 @@
     "@types/node": "^20.9.0",
     "@types/vscode": "^1.84.1",
     "@vscode/vsce": "^2.22.0",
-    "bumpp": "^9.2.0",
+    "bumpp": "^9.4.0",
     "eslint": "npm:eslint-ts-patch@8.57.0-0",
     "eslint-plugin-format": "^0.1.0",
     "eslint-plugin-react": "^7.34.1",
