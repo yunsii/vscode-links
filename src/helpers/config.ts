@@ -4,14 +4,16 @@ export function getExtensionConfig() {
   return vscode.workspace.getConfiguration('links')
 }
 
+export interface ResourceItem {
+  id: string
+  url: string
+  title: string
+  description?: string
+}
+
 export function getExtensionResources() {
   const linksConfig = getExtensionConfig()
-  const resources = linksConfig.get<{
-    id: string
-    url: string
-    title: string
-    description?: string
-  }[]>('resources')
+  const resources = linksConfig.get<ResourceItem[]>('resources')
 
   return resources
 }

@@ -3,7 +3,9 @@ import * as vscode from 'vscode'
 import { addCommand } from '../helpers'
 import { getExtensionResources } from '../../helpers/config'
 
-export function addLinksOpenCommand(context: vscode.ExtensionContext) {
+import type { ResourceItem } from '../../helpers/config'
+
+export async function addLinksOpenCommand(context: vscode.ExtensionContext) {
   addCommand(context, {
     name: 'links.open',
     handler: async () => {
@@ -13,13 +15,17 @@ export function addLinksOpenCommand(context: vscode.ExtensionContext) {
         return
       }
 
-      const result = await vscode.window.showQuickPick(resources.map((item) => {
+      const renderItem = (item: ResourceItem) => {
         return `${item.title} - ${item.url}`
+      }
+
+      const result = await vscode.window.showQuickPick(resources.map((item) => {
+        return renderItem(item)
       }), {
         placeHolder: 'Pick a url to open',
       })
       const target = resources.find((item) => {
-        return `${item.title} | ${item.url}` === result
+        return renderItem(item) === result
       })
 
       if (!target) {
