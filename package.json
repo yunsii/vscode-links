@@ -97,7 +97,7 @@
     "@jannajs/lint": "3.0.0-next.6",
     "@types/node": "^20.9.0",
     "@types/vscode": "^1.84.1",
-    "@vscode/vsce": "^2.22.0",
+    "@vscode/vsce": "^2.26.0",
     "bumpp": "^9.4.0",
     "eslint": "npm:eslint-ts-patch@8.57.0-0",
     "eslint-plugin-format": "^0.1.0",
