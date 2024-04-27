@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 
 import { addCommand } from '../helpers'
-import { getExtensionResources } from '../../helpers/config'
+import { getAllLinkResources } from '../../helpers/config'
 
 import type { ResourceItem } from '../../helpers/config'
 
@@ -9,7 +9,7 @@ export async function addLinksOpenCommand(context: vscode.ExtensionContext) {
   addCommand(context, {
     name: 'links.open',
     handler: async () => {
-      const resources = getExtensionResources()
+      const resources = await getAllLinkResources()
       if (!resources || resources.length === 0) {
         vscode.window.showWarningMessage('No links resources to open')
         return

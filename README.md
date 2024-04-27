@@ -31,7 +31,7 @@ Pursue better UX for project links
 
 - [ ] Support auto parse git repo web links
   - [ ] GitHub
-  - [ ] CODING
+  - [x] CODING
 
 ## License
 
