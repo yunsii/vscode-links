@@ -1,11 +1,16 @@
 import type { ResourceItem } from '../../../helpers/config'
 
 export async function getCodingRepoLinks(project: string, repoName: string) {
-  const repoUrl = `https://duiyun.coding.net/p/${project}/d/${repoName}/git`
+  const projectUrl = `https://duiyun.coding.net/p/${project}`
+  const repoUrl = `${projectUrl}/d/${repoName}/git`
   const result: ResourceItem[] = [
     {
       url: repoUrl,
       title: 'CODING Repo',
+    },
+    {
+      url: `${repoUrl}/branches`,
+      title: 'CODING Repo Branches',
     },
     {
       url: `${repoUrl}/branches`,
@@ -28,7 +33,11 @@ export async function getCodingRepoLinks(project: string, repoName: string) {
       title: 'CODING Repo Settings',
     },
     {
-      url: `https://duiyun.coding.net/p/${project}/ci/job`,
+      url: `${projectUrl}/all/issues`,
+      title: 'CODING Project Issues',
+    },
+    {
+      url: `${projectUrl}/ci/job`,
       title: 'CODING Project CI',
     },
   ]
