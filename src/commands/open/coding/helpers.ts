@@ -13,10 +13,6 @@ export async function getCodingRepoLinks(project: string, repoName: string) {
       title: 'CODING Repo Branches',
     },
     {
-      url: `${repoUrl}/branches`,
-      title: 'CODING Repo Branches',
-    },
-    {
       url: `${repoUrl}/tags`,
       title: 'CODING Repo Tags',
     },
