@@ -1,7 +1,8 @@
 import type { ResourceItem } from '../../../helpers/config'
 
 export async function getCodingRepoLinks(team: string, project: string, repoName: string) {
-  const projectUrl = `https://${team}.coding.net/p/${project}`
+  const teamUrl = `https://${team}.coding.net`
+  const projectUrl = `${teamUrl}/p/${project}`
   const repoUrl = `${projectUrl}/d/${repoName}/git`
   const result: ResourceItem[] = [
     {
@@ -35,6 +36,14 @@ export async function getCodingRepoLinks(team: string, project: string, repoName
     {
       url: `${projectUrl}/ci/job`,
       title: 'CODING Project CI',
+    },
+    {
+      url: `${repoUrl}/user/account/setting/basic`,
+      title: 'CODING Member Profile',
+    },
+    {
+      url: `${repoUrl}/user/account/setting/tokens`,
+      title: 'CODING Member Access Tokens',
     },
   ]
 
