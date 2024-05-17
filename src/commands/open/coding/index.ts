@@ -15,7 +15,7 @@ export async function getCodingRepoResources() {
     return []
   }
 
-  const [repoName, project] = repoUrl.replace('.git', '').split('/').reverse()
+  const [repoName, project, team] = repoUrl.replace('.git', '').split(/\/|:/).reverse()
 
-  return getCodingRepoLinks(project, repoName)
+  return getCodingRepoLinks(team, project, repoName)
 }

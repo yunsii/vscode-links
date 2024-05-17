@@ -1,7 +1,7 @@
 import type { ResourceItem } from '../../../helpers/config'
 
-export async function getCodingRepoLinks(project: string, repoName: string) {
-  const projectUrl = `https://duiyun.coding.net/p/${project}`
+export async function getCodingRepoLinks(team: string, project: string, repoName: string) {
+  const projectUrl = `https://${team}.coding.net/p/${project}`
   const repoUrl = `${projectUrl}/d/${repoName}/git`
   const result: ResourceItem[] = [
     {
