@@ -1,3 +1,5 @@
 import janna from '@jannajs/lint/eslint'
 
-export default janna()
+export default janna({
+  react: false,
+})

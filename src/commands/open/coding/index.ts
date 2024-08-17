@@ -1,21 +1,11 @@
 import { getCurrentRepoUrl } from '../../../helpers/git'
 
-import { getCodingRepoLinks } from './helpers'
+import { getCodingRepoLinks, parseCodingRepoUrl } from './helpers'
 
 export async function getCodingRepoResources() {
-  // git@e.coding.net:org/project/repoName.git
-  // https://e.coding.net/org/project/repoName.git
   const repoUrl = await getCurrentRepoUrl()
 
-  if (!repoUrl) {
-    return []
-  }
+  const { repo, project, team } = parseCodingRepoUrl(repoUrl)
 
-  if (!['git@e.coding.net:', 'https://e.coding.net/'].some((item) => repoUrl.startsWith(item))) {
-    return []
-  }
-
-  const [repoName, project, team] = repoUrl.replace('.git', '').split(/\/|:/).reverse()
-
-  return getCodingRepoLinks(team, project, repoName)
+  return getCodingRepoLinks(team, project, repo)
 }

@@ -1,23 +1,20 @@
-/* eslint-disable no-console */
 import * as vscode from 'vscode'
+
+import { logger } from '../utils'
 
 export async function getCurrentRepoUrl() {
   const { default: gitRemoteOriginUrl } = await import('git-remote-origin-url')
   const currentFile = vscode.window.activeTextEditor?.document.uri || vscode.workspace.workspaceFolders?.[0].uri
+  logger.append(`currentFile: ${currentFile}`)
   if (!currentFile) {
-    return null
+    throw new Error('No current file')
   }
   const targetWorkspaceFolder = vscode.workspace.getWorkspaceFolder(currentFile)
+  logger.append(`targetWorkspaceFolder: ${targetWorkspaceFolder}`)
   if (!targetWorkspaceFolder) {
-    return null
+    throw new Error('No target workspace folder')
   }
 
-  try {
-    const url = await gitRemoteOriginUrl({ cwd: targetWorkspaceFolder.uri.path })
-    return url
-  }
-  catch (err) {
-    console.debug(err)
-    return null
-  }
+  const url = await gitRemoteOriginUrl({ cwd: targetWorkspaceFolder.uri.path })
+  return url
 }

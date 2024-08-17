@@ -1,9 +1,33 @@
 import type { ResourceItem } from '../../../helpers/config'
 
-export async function getCodingRepoLinks(team: string, project: string, repoName: string) {
+/**
+ * Input examples:
+ *
+ * - git@e.coding.net:team/project/repo.git
+ * - https://e.coding.net/team/project/repo.git
+ */
+export function parseCodingRepoUrl(repoUrl: string) {
+  if (!repoUrl) {
+    throw new Error('Unexpected falsy repo url')
+  }
+
+  if (!['git@e.coding.net:', 'https://e.coding.net/'].some((item) => repoUrl.startsWith(item))) {
+    throw new Error('Unexpected CODING repo url')
+  }
+
+  const [repo, project, team] = repoUrl.replace('.git', '').split(/\/|:/).reverse()
+
+  return {
+    repo,
+    project,
+    team,
+  }
+}
+
+export async function getCodingRepoLinks(team: string, project: string, repo: string) {
   const teamUrl = `https://${team}.coding.net`
   const projectUrl = `${teamUrl}/p/${project}`
-  const repoUrl = `${projectUrl}/d/${repoName}/git`
+  const repoUrl = `${projectUrl}/d/${repo}/git`
   const result: ResourceItem[] = [
     {
       url: repoUrl,

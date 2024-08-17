@@ -1,11 +1,9 @@
+import { defineExtension } from 'reactive-vscode'
+
 import { addLinksOpenCommand } from './commands/open'
 
-import type * as vscode from 'vscode'
+const { activate, deactivate } = defineExtension(() => {
+  addLinksOpenCommand()
+})
 
-export function activate(context: vscode.ExtensionContext) {
-  addLinksOpenCommand(context)
-}
-
-export function deactivate() {
-
-}
+export { activate, deactivate }
