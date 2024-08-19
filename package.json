@@ -2,7 +2,7 @@
   "publisher": "yuns",
   "name": "links",
   "displayName": "Links",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": true,
   "packageManager": "pnpm@9.7.1",
   "description": "Pursue better UX for project links",
