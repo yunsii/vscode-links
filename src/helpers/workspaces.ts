@@ -4,7 +4,7 @@ import { useWorkspaceFolders } from 'reactive-vscode'
 import { logger } from '../utils'
 
 export async function getCurrentWorkspace() {
-  const currentFile = vscode.window.activeTextEditor?.document.uri || vscode.workspace.workspaceFolders?.[0].uri
+  const currentFile = vscode.window.activeTextEditor?.document.uri
   logger.info('Current file', currentFile)
 
   let targetWorkspacePath: string | undefined
