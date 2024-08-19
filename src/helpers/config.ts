@@ -1,7 +1,6 @@
 import * as vscode from 'vscode'
 
 import { getCodingRepoResources } from '../commands/open/coding'
-import { logger } from '../utils'
 
 export function getExtensionConfig() {
   return vscode.workspace.getConfiguration('links')
@@ -21,13 +20,14 @@ export function getExtensionResources() {
 }
 
 export async function getAllLinkResources() {
-  try {
-    return [
-      ...getExtensionResources(),
-      ...(await getCodingRepoResources()),
-    ]
-  } catch (err) {
-    logger.error(err)
-    return []
+  const result = [
+    ...getExtensionResources(),
+    ...(await getCodingRepoResources()),
+  ].filter(Boolean)
+
+  if (result.length === 0) {
+    throw new Error('No links resources')
   }
+
+  return result
 }
