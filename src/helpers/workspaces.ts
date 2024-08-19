@@ -4,12 +4,12 @@ import { useWorkspaceFolders } from 'reactive-vscode'
 import { logger } from '../utils'
 
 export async function getCurrentWorkspace() {
-  const currentFile = vscode.window.activeTextEditor?.document.uri
-  logger.info('Current file', currentFile)
+  const currentUri = vscode.window.activeTextEditor?.document.uri
+  logger.info('Current file', currentUri)
 
   let targetWorkspacePath: string | undefined
-  if (currentFile) {
-    targetWorkspacePath = vscode.workspace.getWorkspaceFolder(currentFile)?.uri.path
+  if (currentUri) {
+    targetWorkspacePath = vscode.workspace.getWorkspaceFolder(currentUri)?.uri.fsPath
     logger.info('Current workspace path', targetWorkspacePath)
   }
   if (targetWorkspacePath) {
@@ -26,12 +26,12 @@ export async function getCurrentWorkspace() {
 
   if (workspaces.length >= 2) {
     currentWorkspace = await vscode.window.showQuickPick(workspaces.map((item) => {
-      return item.uri.path
+      return item.uri.fsPath
     }), {
       placeHolder: 'Pick a workspace to get links',
     })
   } else {
-    currentWorkspace = workspaces[0].uri.path
+    currentWorkspace = workspaces[0].uri.fsPath
   }
 
   if (!currentWorkspace) {
