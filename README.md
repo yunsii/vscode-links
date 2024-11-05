@@ -60,7 +60,7 @@
   - [ ] GitHub
   - [x] CODING
 - [ ] Localization support for multiple languages
-- [ ] Improve link management UI
+- [ ] Improve links management UI
 
 ## License
 
