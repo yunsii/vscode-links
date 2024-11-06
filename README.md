@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Logo](res/icon.svg)
+<img alt="Logo" src="res/icon.png" width="280">
 
 # VS Code Links
 
