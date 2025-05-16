@@ -59,9 +59,10 @@
 - [ ] Support auto-parsing of git repository web links
   - [ ] GitHub
   - [x] CODING
+  - [x] CNB
 - [ ] Localization support for multiple languages
 - [ ] Improve links management UI
 
 ## License
 
-[MIT](./LICENSE) License © 2024 [Yuns](https://github.com/yunsii)
+[MIT](./LICENSE) License © 2025 [Yuns](https://github.com/yunsii)
