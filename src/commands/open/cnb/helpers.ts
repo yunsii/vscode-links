@@ -65,7 +65,7 @@ export async function getCnbRepoLinks(groups: string[], repo: string) {
     },
     {
       url: `${origin}/profile`,
-      title: 'CNB User Profile',
+      title: 'CNB User Settings/Profile',
     },
     {
       url: `${repoUrl}/profile/token`,

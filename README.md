@@ -56,8 +56,8 @@
 
 ## Roadmap
 
-- [ ] Support auto-parsing of git repository web links
-  - [ ] GitHub
+- Support auto-parsing of git repository web links
+  - [x] GitHub
   - [x] CODING
   - [x] CNB
 - [ ] Localization support for multiple languages

@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 
 import { getCodingRepoResources } from '../commands/open/coding'
 import { getCnbRepoResources } from '../commands/open/cnb'
+import { getGithubRepoResources } from '../commands/open/github'
 
 export function getExtensionConfig() {
   return vscode.workspace.getConfiguration('links')
@@ -25,6 +26,7 @@ export async function getAllLinkResources() {
     ...getExtensionResources(),
     ...(await getCodingRepoResources()),
     ...(await getCnbRepoResources()),
+    ...(await getGithubRepoResources()),
   ].filter(Boolean)
 
   if (result.length === 0) {
