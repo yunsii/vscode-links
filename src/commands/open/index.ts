@@ -1,5 +1,5 @@
-import * as vscode from 'vscode'
 import { useCommand } from 'reactive-vscode'
+import * as vscode from 'vscode'
 
 import { getAllLinkResources } from '../../helpers/config'
 import { getErrorMessage } from '../../helpers/errors'

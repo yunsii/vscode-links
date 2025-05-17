@@ -23,6 +23,8 @@
 
 - [Features](#features)
 - [Usage](#usage)
+- [Commands](#commands)
+- [Configurations](#configurations)
 - [Roadmap](#roadmap)
 - [License](#license)
 
@@ -53,6 +55,26 @@
 3. Type **Links: Open...** and select it.
 
 4. Choose the link you want to open in your default browser 🎉.
+
+## Commands
+
+<!-- commands -->
+
+| Command      | Title          |
+| ------------ | -------------- |
+| `links.open` | Links Open ... |
+
+<!-- commands -->
+
+## Configurations
+
+<!-- configs -->
+
+| Key               | Description       | Type    | Default |
+| ----------------- | ----------------- | ------- | ------- |
+| `links.resources` | Resources to open | `array` | ``      |
+
+<!-- configs -->
 
 ## Roadmap
 

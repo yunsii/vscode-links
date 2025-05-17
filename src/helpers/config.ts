@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 
-import { getCodingRepoResources } from '../commands/open/coding'
 import { getCnbRepoResources } from '../commands/open/cnb'
+import { getCodingRepoResources } from '../commands/open/coding'
 import { getGithubRepoResources } from '../commands/open/github'
 
 export function getExtensionConfig() {

@@ -1,5 +1,5 @@
-import * as vscode from 'vscode'
 import { useWorkspaceFolders } from 'reactive-vscode'
+import * as vscode from 'vscode'
 
 import { logger } from '../utils'
 
