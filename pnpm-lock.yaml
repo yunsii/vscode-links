@@ -40,7 +40,7 @@ importers:
         specifier: ^22.15.18
         version: 22.15.18
       '@types/vscode':
-        specifier: ^1.100.0
+        specifier: ^1.92.0
         version: 1.100.0
       '@vscode/vsce':
         specifier: ^3.4.0
@@ -4115,7 +4115,7 @@ snapshots:
   '@babel/types@7.24.0':
     dependencies:
       '@babel/helper-string-parser': 7.24.1
-      '@babel/helper-validator-identifier': 7.22.20
+      '@babel/helper-validator-identifier': 7.27.1
       to-fast-properties: 2.0.0
 
   '@clack/core@0.4.1':
