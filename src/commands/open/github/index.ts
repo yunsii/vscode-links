@@ -1,8 +1,7 @@
+import { getErrorMessage } from '../../../helpers/errors'
 import { getCurrentRepoUrl } from '../../../helpers/git'
 import { getCurrentWorkspace } from '../../../helpers/workspaces'
 import { logger } from '../../../utils'
-import { getErrorMessage } from '../../../helpers/errors'
-
 import { getGitHubRepoLinks, parseGitHubRepoUrl } from './helpers'
 
 export async function getGithubRepoResources() {

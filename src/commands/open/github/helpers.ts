@@ -17,7 +17,8 @@ export function parseGitHubRepoUrl(repoUrl: string) {
 
   const [repo, owner] = repoUrl
     .replace('.git', '')
-    .split(/\/|:/).reverse()
+    .split(/\/|:/)
+    .reverse()
 
   return {
     repo,

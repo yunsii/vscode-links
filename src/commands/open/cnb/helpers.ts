@@ -17,7 +17,8 @@ export function parseCnbRepoUrl(repoUrl: string) {
   const [repo, ...reverseGroups] = repoUrl
     .replace('https://cnb.cool/', '')
     .replace('.git', '')
-    .split(/\//).reverse()
+    .split(/\//)
+    .reverse()
 
   return {
     repo,
