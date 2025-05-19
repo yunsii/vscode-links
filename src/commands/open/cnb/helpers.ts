@@ -31,7 +31,7 @@ export async function getCnbRepoLinks(groups: string[], repo: string) {
   const mainGroup = groups[0]
   const mainGroupUrl = `${origin}/${mainGroup}`
   const subGroupsUrl = groups.slice(1).map((item, index) => {
-    return `${origin}/${groups.slice(0, index + 1).join('/')}`
+    return `${origin}/${groups.slice(0, index + 2).join('/')}`
   })
   const currentGroupUrl = subGroupsUrl[subGroupsUrl.length - 1] || mainGroupUrl
   const repoUrl = `${currentGroupUrl}/${repo}`
@@ -69,7 +69,7 @@ export async function getCnbRepoLinks(groups: string[], repo: string) {
       title: 'CNB User Settings/Profile',
     },
     {
-      url: `${repoUrl}/profile/token`,
+      url: `${origin}/profile/token`,
       title: 'CNB User Access Tokens',
     },
   ]
