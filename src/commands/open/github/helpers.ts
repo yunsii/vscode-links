@@ -1,5 +1,17 @@
 import type { ResourceItem } from '../../../helpers/config'
 
+export function ensureGitHubRepoUrl(repoUrl?: string | null): repoUrl is string {
+  if (!repoUrl) {
+    return false
+  }
+
+  if (!['git@github.com:', 'https://github.com/'].some((item) => repoUrl.startsWith(item))) {
+    return false
+  }
+
+  return true
+}
+
 /**
  * Input examples:
  *
@@ -7,14 +19,6 @@ import type { ResourceItem } from '../../../helpers/config'
  * - https://github.com/owner/repo.git
  */
 export function parseGitHubRepoUrl(repoUrl: string) {
-  if (!repoUrl) {
-    throw new Error('Unexpected falsy repo url')
-  }
-
-  if (!['git@github.com:', 'https://github.com/'].some((item) => repoUrl.startsWith(item))) {
-    throw new Error('Unexpected GitHub repo url')
-  }
-
   const [repo, owner] = repoUrl
     .replace('.git', '')
     .split(/\/|:/)
@@ -26,9 +30,19 @@ export function parseGitHubRepoUrl(repoUrl: string) {
   }
 }
 
-export async function getGitHubRepoLinks(owner: string, repo: string) {
+export function getGitHubRepoBaseUrls(owner: string, repo: string) {
   const origin = `https://github.com`
   const repoUrl = `${origin}/${owner}/${repo}`
+
+  return {
+    origin,
+    repoUrl,
+  }
+}
+
+export function getGitHubRepoLinks(owner: string, repo: string) {
+  const { origin, repoUrl } = getGitHubRepoBaseUrls(owner, repo)
+
   const result: ResourceItem[] = [
     {
       url: repoUrl,
@@ -69,4 +83,10 @@ export async function getGitHubRepoLinks(owner: string, repo: string) {
   ]
 
   return result
+}
+
+export function getGitHubFileUrl(owner: string, repo: string, branch: string, filePath: string) {
+  const { repoUrl } = getGitHubRepoBaseUrls(owner, repo)
+  const fileUrl = encodeURI(`${repoUrl}/blob/${branch}/${filePath}`)
+  return fileUrl
 }

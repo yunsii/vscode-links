@@ -1,5 +1,17 @@
 import type { ResourceItem } from '../../../helpers/config'
 
+export function ensureCodingRepoUrl(repoUrl?: string | null): repoUrl is string {
+  if (!repoUrl) {
+    return false
+  }
+
+  if (!['git@e.coding.net:', 'https://e.coding.net/'].some((item) => repoUrl.startsWith(item))) {
+    return false
+  }
+
+  return true
+}
+
 /**
  * Input examples:
  *
@@ -24,10 +36,20 @@ export function parseCodingRepoUrl(repoUrl: string) {
   }
 }
 
-export async function getCodingRepoLinks(team: string, project: string, repo: string) {
+export function getCodingRepoBaseUrls(team: string, project: string, repo: string) {
   const teamUrl = `https://${team}.coding.net`
   const projectUrl = `${teamUrl}/p/${project}`
   const repoUrl = `${projectUrl}/d/${repo}/git`
+
+  return {
+    teamUrl,
+    projectUrl,
+    repoUrl,
+  }
+}
+
+export function getCodingRepoLinks(team: string, project: string, repo: string) {
+  const { projectUrl, repoUrl } = getCodingRepoBaseUrls(team, project, repo)
   const result: ResourceItem[] = [
     {
       url: repoUrl,
@@ -72,4 +94,10 @@ export async function getCodingRepoLinks(team: string, project: string, repo: st
   ]
 
   return result
+}
+
+export function getCodingFileUrl(team: string, project: string, repo: string, branch: string, filePath: string) {
+  const { repoUrl } = getCodingRepoBaseUrls(team, project, repo)
+  const fileUrl = encodeURI(`${repoUrl}/tree/${branch}/${filePath}`)
+  return fileUrl
 }

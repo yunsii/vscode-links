@@ -41,3 +41,20 @@ export async function getCurrentWorkspace() {
   logger.info('Current workspace', currentWorkspace)
   return currentWorkspace
 }
+
+export async function getCurrentFileRelativePath() {
+  const currentUri = vscode.window.activeTextEditor?.document.uri
+
+  if (!currentUri) {
+    return null
+  }
+
+  const workspaceFolder = vscode.workspace.getWorkspaceFolder(currentUri)
+  if (!workspaceFolder) {
+    return null
+  }
+
+  const relativePath = vscode.workspace.asRelativePath(currentUri, false)
+
+  return relativePath
+}

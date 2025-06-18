@@ -1,19 +1,23 @@
 import type { ResourceItem } from '../../../helpers/config'
 
+export function ensureCnbRepoUrl(repoUrl?: string | null): repoUrl is string {
+  if (!repoUrl) {
+    return false
+  }
+
+  if (!['https://cnb.cool/'].some((item) => repoUrl.startsWith(item))) {
+    return false
+  }
+
+  return !!repoUrl.length
+}
+
 /**
  * Input examples:
  *
  * - https://cnb.cool/group/repo.git
  */
 export function parseCnbRepoUrl(repoUrl: string) {
-  if (!repoUrl) {
-    throw new Error('Unexpected falsy repo url')
-  }
-
-  if (!['https://cnb.cool/'].some((item) => repoUrl.startsWith(item))) {
-    throw new Error('Unexpected CNB repo url')
-  }
-
   const [repo, ...reverseGroups] = repoUrl
     .replace('https://cnb.cool/', '')
     .replace('.git', '')
@@ -26,15 +30,25 @@ export function parseCnbRepoUrl(repoUrl: string) {
   }
 }
 
-export async function getCnbRepoLinks(groups: string[], repo: string) {
+export function getCnbRepoBaseUrls(groups: string[], repo: string) {
   const origin = `https://cnb.cool`
   const mainGroup = groups[0]
   const mainGroupUrl = `${origin}/${mainGroup}`
-  const subGroupsUrl = groups.slice(1).map((item, index) => {
+  const subGroupsUrls = groups.slice(1).map((item, index) => {
     return `${origin}/${groups.slice(0, index + 2).join('/')}`
   })
-  const currentGroupUrl = subGroupsUrl[subGroupsUrl.length - 1] || mainGroupUrl
+  const currentGroupUrl = subGroupsUrls[subGroupsUrls.length - 1] || mainGroupUrl
   const repoUrl = `${currentGroupUrl}/${repo}`
+  return {
+    origin,
+    mainGroupUrl,
+    currentGroupUrl,
+    repoUrl,
+  }
+}
+
+export function getCnbRepoLinks(groups: string[], repo: string) {
+  const { origin, repoUrl } = getCnbRepoBaseUrls(groups, repo)
   const result: ResourceItem[] = [
     {
       url: repoUrl,
@@ -75,4 +89,10 @@ export async function getCnbRepoLinks(groups: string[], repo: string) {
   ]
 
   return result
+}
+
+export function getCnbFileUrl(groups: string[], repo: string, branch: string, filePath: string) {
+  const { repoUrl } = getCnbRepoBaseUrls(groups, repo)
+  const fileUrl = encodeURI(`${repoUrl}/-/blob/${branch}/${filePath}`)
+  return fileUrl
 }
