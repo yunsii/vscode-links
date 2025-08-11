@@ -82,6 +82,7 @@
   - [x] GitHub
   - [x] CODING
   - [x] CNB
+- [ ] Support auto-parsing web links from [Google Sheets](https://workspace.google.com/products/sheets/)
 - [ ] Localization support for multiple languages
 - [ ] Improve links management UI
 
