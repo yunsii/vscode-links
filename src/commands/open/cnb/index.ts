@@ -1,10 +1,10 @@
-import { getErrorMessage } from '../../../helpers/errors'
-import { getCurrentBranch, getCurrentRepoUrl } from '../../../helpers/git'
-import { getCurrentFileRelativePath, getCurrentWorkspace } from '../../../helpers/workspaces'
-import { logger } from '../../../utils'
-import { ensureCnbRepoUrl, getCnbFileUrl, getCnbRepoLinks, parseCnbRepoUrl } from './helpers'
+import { getErrorMessage } from '@/helpers/errors'
+import { getCurrentBranch, getCurrentRepoUrl } from '@/helpers/git'
+import type { BaseLinkResource } from '@/helpers/schemas'
+import { getCurrentFileRelativePath, getCurrentWorkspace } from '@/helpers/workspaces'
+import { logger } from '@/utils'
 
-import type { ResourceItem } from '../../../helpers/config'
+import { ensureCnbRepoUrl, getCnbFileUrl, getCnbRepoLinks, parseCnbRepoUrl } from './helpers'
 
 export async function getCnbRepoResources() {
   try {
@@ -25,7 +25,7 @@ export async function getCnbRepoResources() {
     const currentFileRelativePath = await getCurrentFileRelativePath()
 
     if (currentFileRelativePath) {
-      const currentFileLink: ResourceItem = {
+      const currentFileLink: BaseLinkResource = {
         url: getCnbFileUrl(groups, repo, currentBranch, currentFileRelativePath),
         title: 'CNB Repo Current File',
       }

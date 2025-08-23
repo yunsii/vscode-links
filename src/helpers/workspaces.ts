@@ -1,7 +1,7 @@
 import { useWorkspaceFolders } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
-import { logger } from '../utils'
+import { logger } from '@/utils'
 
 export async function getCurrentWorkspace() {
   const currentUri = vscode.window.activeTextEditor?.document.uri

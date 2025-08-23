@@ -1,4 +1,4 @@
-import type { ResourceItem } from '../../../helpers/config'
+import type { BaseLinkResource } from '@/helpers/schemas'
 
 export function ensureGitHubRepoUrl(repoUrl?: string | null): repoUrl is string {
   if (!repoUrl) {
@@ -43,7 +43,7 @@ export function getGitHubRepoBaseUrls(owner: string, repo: string) {
 export function getGitHubRepoLinks(owner: string, repo: string) {
   const { origin, repoUrl } = getGitHubRepoBaseUrls(owner, repo)
 
-  const result: ResourceItem[] = [
+  const result: BaseLinkResource[] = [
     {
       url: repoUrl,
       title: 'GitHub Repo',

@@ -41,7 +41,7 @@
       "title": "Links",
       "properties": {
         "links.resources": {
-          "description": "Resources to open",
+          "description": "Local resources to open",
           "type": "array",
           "uniqueItems": true,
           "items": {
@@ -65,6 +65,42 @@
               }
             }
           }
+        },
+        "links.remoteResources": {
+          "oneOf": [
+            {
+              "type": "null",
+              "default": null,
+              "description": "Not configured (default)"
+            },
+            {
+              "type": "object",
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "Remote CSV file URL"
+                },
+                "project": {
+                  "type": "string",
+                  "description": "Project name, used to filter resources"
+                }
+              }
+            }
+          ],
+          "description": "Remote resources to open: set to an object with `url` and `project`. Leave unset (null) to disable."
+        },
+        "links.sharedTitlePrefix": {
+          "type": "string",
+          "default": "[shared] ",
+          "description": "Prefix added to titles from the shared remote project"
+        },
+        "links.remoteTitlePrefix": {
+          "type": "string",
+          "default": "[remote] ",
+          "description": "Prefix added to titles from the current remote project"
         }
       }
     },
@@ -90,8 +126,12 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
+    "axios": "^1.11.0",
+    "es-toolkit": "^1.39.10",
+    "papaparse": "^5.5.3",
     "reactive-vscode": "^0.2.17",
-    "simple-git": "^3.28.0"
+    "simple-git": "^3.28.0",
+    "zod": "^4.1.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.16.0",
@@ -102,6 +142,7 @@
     "@jannajs/lint": "^3.1.1",
     "@prettier/plugin-xml": "^3.4.1",
     "@types/node": "^22.15.18",
+    "@types/papaparse": "^5.3.16",
     "@types/vscode": "^1.92.0",
     "@vscode/vsce": "^3.4.0",
     "bumpp": "^10.1.1",
@@ -118,7 +159,7 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vitest": "^3.1.3",
-    "vscode-ext-gen": "^1.0.2"
+    "vscode-ext-gen": "^1.1.0"
   },
   "lint-staged": {
     "*": "eslint --fix"

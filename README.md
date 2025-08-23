@@ -70,9 +70,12 @@
 
 <!-- configs -->
 
-| Key               | Description       | Type    | Default |
-| ----------------- | ----------------- | ------- | ------- |
-| `links.resources` | Resources to open | `array` | ``      |
+| Key                       | Description                                                                                         | Type        | Default       |
+| ------------------------- | --------------------------------------------------------------------------------------------------- | ----------- | ------------- |
+| `links.resources`         | Local resources to open                                                                             | `array`     | ``            |
+| `links.remoteResources`   | Remote resources to open: set to an object with `url` and `project`. Leave unset (null) to disable. | `undefined` | ``            |
+| `links.sharedTitlePrefix` | Prefix added to titles from the shared remote project                                               | `string`    | `"[shared] "` |
+| `links.remoteTitlePrefix` | Prefix added to titles from the current remote project                                              | `string`    | `"[remote] "` |
 
 <!-- configs -->
 
@@ -82,7 +85,7 @@
   - [x] GitHub
   - [x] CODING
   - [x] CNB
-- [ ] Support auto-parsing web links from [Google Sheets](https://workspace.google.com/products/sheets/)
+- Automatically fetch and parse web links from a remote CSV
 - [ ] Localization support for multiple languages
 - [ ] Improve links management UI
 

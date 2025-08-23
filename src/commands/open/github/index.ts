@@ -1,10 +1,10 @@
-import { getErrorMessage } from '../../../helpers/errors'
-import { getCurrentBranch, getCurrentRepoUrl } from '../../../helpers/git'
-import { getCurrentFileRelativePath, getCurrentWorkspace } from '../../../helpers/workspaces'
-import { logger } from '../../../utils'
-import { ensureGitHubRepoUrl, getGitHubFileUrl, getGitHubRepoLinks, parseGitHubRepoUrl } from './helpers'
+import { getErrorMessage } from '@/helpers/errors'
+import { getCurrentBranch, getCurrentRepoUrl } from '@/helpers/git'
+import type { BaseLinkResource } from '@/helpers/schemas'
+import { getCurrentFileRelativePath, getCurrentWorkspace } from '@/helpers/workspaces'
+import { logger } from '@/utils'
 
-import type { ResourceItem } from '../../../helpers/config'
+import { ensureGitHubRepoUrl, getGitHubFileUrl, getGitHubRepoLinks, parseGitHubRepoUrl } from './helpers'
 
 export async function getGithubRepoResources() {
   try {
@@ -26,7 +26,7 @@ export async function getGithubRepoResources() {
     logger.info('Current file relative path', currentFileRelativePath)
 
     if (currentFileRelativePath) {
-      const currentFileLink: ResourceItem = {
+      const currentFileLink: BaseLinkResource = {
         url: getGitHubFileUrl(owner, repo, currentBranch, currentFileRelativePath),
         title: 'GitHub Repo Current File',
       }

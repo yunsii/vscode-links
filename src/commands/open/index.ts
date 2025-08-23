@@ -1,18 +1,18 @@
 import { useCommand } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
+import type { BaseLinkResource } from '@/helpers/schemas'
+
 import { getAllLinkResources } from '../../helpers/config'
 import { getErrorMessage } from '../../helpers/errors'
 import { logger } from '../../utils'
-
-import type { ResourceItem } from '../../helpers/config'
 
 export async function addLinksOpenCommand() {
   useCommand('links.open', async () => {
     try {
       const resources = await getAllLinkResources()
 
-      const renderItem = (item: ResourceItem) => {
+      const renderItem = (item: BaseLinkResource) => {
         return `${item.title} - ${item.url}`
       }
 

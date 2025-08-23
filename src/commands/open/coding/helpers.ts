@@ -1,4 +1,4 @@
-import type { ResourceItem } from '../../../helpers/config'
+import type { BaseLinkResource } from '@/helpers/schemas'
 
 export function ensureCodingRepoUrl(repoUrl?: string | null): repoUrl is string {
   if (!repoUrl) {
@@ -50,7 +50,7 @@ export function getCodingRepoBaseUrls(team: string, project: string, repo: strin
 
 export function getCodingRepoLinks(team: string, project: string, repo: string) {
   const { projectUrl, repoUrl } = getCodingRepoBaseUrls(team, project, repo)
-  const result: ResourceItem[] = [
+  const result: BaseLinkResource[] = [
     {
       url: repoUrl,
       title: 'CODING Repo',

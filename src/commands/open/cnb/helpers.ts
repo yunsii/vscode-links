@@ -1,4 +1,4 @@
-import type { ResourceItem } from '../../../helpers/config'
+import type { BaseLinkResource } from '@/helpers/schemas'
 
 export function ensureCnbRepoUrl(repoUrl?: string | null): repoUrl is string {
   if (!repoUrl) {
@@ -49,7 +49,7 @@ export function getCnbRepoBaseUrls(groups: string[], repo: string) {
 
 export function getCnbRepoLinks(groups: string[], repo: string) {
   const { origin, repoUrl } = getCnbRepoBaseUrls(groups, repo)
-  const result: ResourceItem[] = [
+  const result: BaseLinkResource[] = [
     {
       url: repoUrl,
       title: 'CNB Repo',
