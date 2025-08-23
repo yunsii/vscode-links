@@ -86,6 +86,7 @@
   - [x] CODING
   - [x] CNB
 - Automatically fetch and parse web links from a remote CSV
+- [Template variables](./docs/variables.md): support injecting repo/workspace variables into link templates
 - [ ] Localization support for multiple languages
 - [ ] Improve links management UI
 

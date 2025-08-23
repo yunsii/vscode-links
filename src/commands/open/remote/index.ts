@@ -2,11 +2,10 @@ import { sortBy } from 'es-toolkit'
 
 import { getExtensionRemoteResourcesConfig, getRemoteTitlePrefix, getSharedTitlePrefix } from '@/helpers/config'
 import { getLinksResourcesFromRemoteCsv } from '@/helpers/csv'
-import { logger } from '@/utils'
 
 const SHARED_PROJECT = '#shared-links'
 
-export async function getRemoteResources() {
+export async function getRemoteResources(onError: (err: unknown) => void) {
   const remoteResourcesConfig = getExtensionRemoteResourcesConfig()
   if (!remoteResourcesConfig) {
     return []
@@ -31,7 +30,7 @@ export async function getRemoteResources() {
         return resource
       })
   } catch (error) {
-    logger.warn('Failed to fetch remote links resources', error)
+    onError(error)
   }
   return []
 }

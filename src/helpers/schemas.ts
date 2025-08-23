@@ -4,6 +4,7 @@ export const baseLinkResourceSchema = z.object({
   url: z.url(),
   title: z.string().min(2).max(100),
   description: z.string().max(500).optional(),
+  meta: z.record(z.string(), z.unknown()).optional(),
 })
 export const baseLinksResourcesSchema = z.array(baseLinkResourceSchema)
 

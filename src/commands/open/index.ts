@@ -5,12 +5,14 @@ import type { BaseLinkResource } from '@/helpers/schemas'
 
 import { getAllLinkResources } from '../../helpers/config'
 import { getErrorMessage } from '../../helpers/errors'
+import { withLoadingStatus } from '../../helpers/loading'
 import { logger } from '../../utils'
 
 export async function addLinksOpenCommand() {
   useCommand('links.open', async () => {
     try {
-      const resources = await getAllLinkResources()
+      // show a transient status message if resource loading is slow
+      const resources = await withLoadingStatus(getAllLinkResources(), { message: 'Link resources are loading...', delayMs: 1000 })
 
       const renderItem = (item: BaseLinkResource) => {
         return `${item.title} - ${item.url}`

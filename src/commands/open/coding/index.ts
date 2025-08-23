@@ -1,4 +1,3 @@
-import { getErrorMessage } from '@/helpers/errors'
 import { getCurrentBranch, getCurrentRepoUrl } from '@/helpers/git'
 import type { BaseLinkResource } from '@/helpers/schemas'
 import { getCurrentFileRelativePath, getCurrentWorkspace } from '@/helpers/workspaces'
@@ -6,7 +5,7 @@ import { logger } from '@/utils'
 
 import { ensureCodingRepoUrl, getCodingFileUrl, getCodingRepoLinks, parseCodingRepoUrl } from './helpers'
 
-export async function getCodingRepoResources() {
+export async function getCodingRepoResources(onError: (err: unknown) => void) {
   try {
     const currentWorkSpace = await getCurrentWorkspace()
     const repoUrl = await getCurrentRepoUrl(currentWorkSpace)
@@ -34,7 +33,7 @@ export async function getCodingRepoResources() {
     }
     return result
   } catch (err) {
-    logger.error(getErrorMessage(err))
+    onError(err)
   }
   return []
 }

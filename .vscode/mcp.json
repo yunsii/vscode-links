@@ -1,0 +1,19 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "CONTEXT7_API_KEY",
+      "description": "Enter your Context 7 API key for MCP"
+    }
+  ],
+  "servers": {
+    "deepwiki": {
+      "url": "https://mcp.deepwiki.com/mcp"
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "${input:CONTEXT7_API_KEY}"]
+    }
+  }
+}

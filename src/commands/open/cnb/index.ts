@@ -1,4 +1,3 @@
-import { getErrorMessage } from '@/helpers/errors'
 import { getCurrentBranch, getCurrentRepoUrl } from '@/helpers/git'
 import type { BaseLinkResource } from '@/helpers/schemas'
 import { getCurrentFileRelativePath, getCurrentWorkspace } from '@/helpers/workspaces'
@@ -6,7 +5,7 @@ import { logger } from '@/utils'
 
 import { ensureCnbRepoUrl, getCnbFileUrl, getCnbRepoLinks, parseCnbRepoUrl } from './helpers'
 
-export async function getCnbRepoResources() {
+export async function getCnbRepoResources(onError: (err: unknown) => void) {
   try {
     const currentWorkSpace = await getCurrentWorkspace()
     const repoUrl = await getCurrentRepoUrl(currentWorkSpace)
@@ -33,7 +32,7 @@ export async function getCnbRepoResources() {
     }
     return result
   } catch (err) {
-    logger.error(getErrorMessage(err))
+    onError(err)
   }
   return []
 }
