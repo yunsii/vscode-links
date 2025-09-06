@@ -5,6 +5,7 @@ import { getAllLinkResources } from '../../helpers/config'
 import { getErrorMessage } from '../../helpers/errors'
 import { getIconForType } from '../../helpers/icons'
 import { withLoadingStatus } from '../../helpers/loading'
+import { openLinkResource } from '../../helpers/open'
 import { processLinkDisplay } from '../../helpers/url'
 import { logger } from '../../utils'
 
@@ -34,7 +35,8 @@ export async function addLinksOpenCommand() {
 
       const target = result.item
 
-      vscode.env.openExternal(vscode.Uri.parse(target.url))
+      // Use unified function to open the link with real-time rendering
+      await openLinkResource(target)
     } catch (err) {
       logger.error(err)
       vscode.window.showWarningMessage(getErrorMessage(err))

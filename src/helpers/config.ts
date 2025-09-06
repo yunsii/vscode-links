@@ -11,7 +11,6 @@ import { getErrorMessage } from '@/helpers/errors'
 import { getCurrentRepoUrl } from '@/helpers/git'
 import type { BaseLinkResource } from '@/helpers/schemas'
 import { getCurrentWorkspace } from '@/helpers/workspaces'
-import { renderResources } from '@/template/engine'
 import { logger } from '@/utils'
 
 // 使用 vscode-ext-gen 生成的类型定义，忽略 remoteResources 类型并通过 & 声明
@@ -94,16 +93,15 @@ export async function getAllLinkResources() {
     try {
       const workspace = await getCurrentWorkspace()
       const repoUrl = await getCurrentRepoUrl(workspace)
-      const rendered = await renderResources(result, { workspacePath: workspace, repoUrl })
-      // allow subsequent calls to return cachedResources
-      cachedResources = rendered
+      // Return raw resources without rendering
+      cachedResources = result
       cachedPromise = null
-      return rendered
+      return result
     } catch (err) {
-      // if templating fails, fall back to raw result but still cache
-      cachedResources = result as BaseLinkResource[]
+      // if getting workspace/repo fails, still cache raw result
+      cachedResources = result
       cachedPromise = null
-      return cachedResources
+      return result
     }
   })()
 

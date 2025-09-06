@@ -88,25 +88,3 @@ export function renderResource(resource: BaseLinkResource, context: JsonObject):
 
   return out
 }
-
-export async function renderResources(resources: BaseLinkResource[], options: { workspacePath?: string, repoUrl?: string | null }): Promise<BaseLinkResource[]> {
-  const context = await buildContext(options)
-  logger.info('builded context', JSON.stringify(context))
-  const rendered: BaseLinkResource[] = []
-  for (const r of resources) {
-    try {
-      const before = { url: r.url, title: r.title }
-      const out = renderResource(r, context)
-      const after = { url: out.url, title: out.title }
-      rendered.push(out)
-      logger.info('resource rendered', JSON.stringify({ before, after }))
-    } catch (err) {
-      // on render error, return original resource
-      logger.warn('template render error, returning original resource', err)
-      rendered.push(r)
-    }
-  }
-
-  logger.info('renderResources completed', JSON.stringify({ total: resources.length }))
-  return rendered
-}

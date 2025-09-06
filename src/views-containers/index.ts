@@ -1,8 +1,10 @@
 import { ref, useCommands, useVscodeContext } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
-import { logger } from '../utils'
+import { openLinkResource } from '../helpers/open'
 import { LinksProvider } from './provider'
+
+import type { BaseLinkResource } from '../helpers/schemas'
 
 export function setupViewsAndCommands() {
   const provider = new LinksProvider()
@@ -14,19 +16,8 @@ export function setupViewsAndCommands() {
   useVscodeContext(searchContextKey, () => isSearchMode.value)
 
   useCommands({
-    'links.openUrl': (url: string) => {
-      logger.info('Opening URL:', url)
-      try {
-        // 确保 URL 有协议
-        let processedUrl = url
-        if (!url.match(/^https?:\/\//)) {
-          processedUrl = `https://${url}`
-        }
-        vscode.env.openExternal(vscode.Uri.parse(processedUrl))
-      } catch (error) {
-        logger.error('Failed to open URL:', error)
-        vscode.window.showErrorMessage(`Failed to open URL: ${url}`)
-      }
+    'links.openUrl': async (resource: BaseLinkResource) => {
+      await openLinkResource(resource)
     },
     'links.refresh': () => provider.refresh(),
     'links.enterSearch': async () => {

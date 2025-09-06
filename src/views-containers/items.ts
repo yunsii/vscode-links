@@ -19,7 +19,7 @@ export class LinkItem extends vscode.TreeItem {
     this.command = {
       command: 'links.openUrl',
       title: 'Open Link',
-      arguments: [resource.url],
+      arguments: [resource],
     }
   }
 
