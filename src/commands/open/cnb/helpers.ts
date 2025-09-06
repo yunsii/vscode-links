@@ -53,38 +53,47 @@ export function getCnbRepoLinks(groups: string[], repo: string) {
     {
       url: repoUrl,
       title: 'CNB Repo',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/-/branches`,
       title: 'CNB Repo Branches',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/-/tags`,
       title: 'CNB Repo Tags',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/-/pulls`,
       title: 'CNB Repo MR/PR',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/-/releases`,
       title: 'CNB Repo Releases',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/-/settings`,
       title: 'CNB Repo Settings',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/-/issues`,
       title: 'CNB Repo Issues',
+      type: 'detected',
     },
     {
       url: `${origin}/profile`,
       title: 'CNB User Settings/Profile',
+      type: 'detected',
     },
     {
       url: `${origin}/profile/token`,
       title: 'CNB User Access Tokens',
+      type: 'detected',
     },
   ]
 

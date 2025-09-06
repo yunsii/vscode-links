@@ -27,7 +27,8 @@ export async function getCodingRepoResources(onError: (err: unknown) => void) {
     if (currentFileRelativePath) {
       const currentFileLink: BaseLinkResource = {
         url: getCodingFileUrl(team, project, repo, currentBranch, currentFileRelativePath),
-        title: 'GitHub Repo Current File',
+        title: 'CODING Repo Current File',
+        type: 'detected',
       }
       return [...result, currentFileLink]
     }

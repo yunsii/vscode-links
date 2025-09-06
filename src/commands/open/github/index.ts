@@ -28,6 +28,7 @@ export async function getGithubRepoResources(onError: (err: unknown) => void) {
       const currentFileLink: BaseLinkResource = {
         url: getGitHubFileUrl(owner, repo, currentBranch, currentFileRelativePath),
         title: 'GitHub Repo Current File',
+        type: 'detected',
       }
       return [...result, currentFileLink]
     }

@@ -47,38 +47,47 @@ export function getGitHubRepoLinks(owner: string, repo: string) {
     {
       url: repoUrl,
       title: 'GitHub Repo',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/branches`,
       title: 'GitHub Repo Branches',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/tags`,
       title: 'GitHub Repo Tags',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/pulls`,
       title: 'GitHub Repo MR/PR',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/releases`,
       title: 'GitHub Repo Releases',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/settings`,
       title: 'GitHub Repo Settings',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/issues`,
       title: 'GitHub Repo Issues',
+      type: 'detected',
     },
     {
       url: `${origin}/settings`,
       title: 'GitHub User Settings',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/settings/keys`,
       title: 'GitHub User SSH and GPG Keys',
+      type: 'detected',
     },
   ]
 

@@ -34,9 +34,18 @@
     "yaml"
   ],
   "cSpell.words": [
-    "bumpp"
+    "bumpp",
+    "cutcopypaste"
   ],
   "links.remoteResources": {
     "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlzHErycXFRcNf2u9kB3SndusKyGaAEmoh2gueEKEtkTaibfMKKgOonlJhgBArqKrKJJlXthTo7LFN/pub?gid=0&single=true&output=csv"
-  }
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true
+  },
+  "explorerExclude.backup": {}
 }

@@ -60,9 +60,14 @@
 
 <!-- commands -->
 
-| Command      | Title          |
-| ------------ | -------------- |
-| `links.open` | Links Open ... |
+| Command             | Title             |
+| ------------------- | ----------------- |
+| `links.open`        | Links Open ...    |
+| `links.refresh`     | Refresh Links     |
+| `links.enterSearch` | Enter Search Mode |
+| `links.exitSearch`  | Exit Search Mode  |
+| `links.openUrl`     | Open Link         |
+| `links.copyUrl`     | Copy Link URL     |
 
 <!-- commands -->
 
@@ -70,12 +75,11 @@
 
 <!-- configs -->
 
-| Key                       | Description                                                                                         | Type        | Default       |
-| ------------------------- | --------------------------------------------------------------------------------------------------- | ----------- | ------------- |
-| `links.resources`         | Local resources to open                                                                             | `array`     | ``            |
-| `links.remoteResources`   | Remote resources to open: set to an object with `url` and `project`. Leave unset (null) to disable. | `undefined` | ``            |
-| `links.sharedTitlePrefix` | Prefix added to titles from the shared remote project                                               | `string`    | `"[shared] "` |
-| `links.remoteTitlePrefix` | Prefix added to titles from the current remote project                                              | `string`    | `"[remote] "` |
+| Key                     | Description                                                                                         | Type        | Default                                                                                        |
+| ----------------------- | --------------------------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------- |
+| `links.resources`       | Local resources to open                                                                             | `array`     | ``                                                                                             |
+| `links.remoteResources` | Remote resources to open: set to an object with `url` and `project`. Leave unset (null) to disable. | `undefined` | ``                                                                                             |
+| `links.customIcons`     | Custom icons for different link types                                                               | `object`    | `{ "local": "folder", "detected": "eye", "remote-project": "repo", "remote-shared": "share" }` |
 
 <!-- configs -->
 

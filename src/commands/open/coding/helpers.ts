@@ -54,42 +54,52 @@ export function getCodingRepoLinks(team: string, project: string, repo: string) 
     {
       url: repoUrl,
       title: 'CODING Repo',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/branches`,
       title: 'CODING Repo Branches',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/tags`,
       title: 'CODING Repo Tags',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/merges`,
       title: 'CODING Repo MR/PR',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/releases`,
       title: 'CODING Repo Releases',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/settings`,
       title: 'CODING Repo Settings',
+      type: 'detected',
     },
     {
       url: `${projectUrl}/all/issues`,
       title: 'CODING Project Issues',
+      type: 'detected',
     },
     {
       url: `${projectUrl}/ci/job`,
       title: 'CODING Project CI',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/user/account/setting/basic`,
       title: 'CODING Member Profile',
+      type: 'detected',
     },
     {
       url: `${repoUrl}/user/account/setting/tokens`,
       title: 'CODING Member Access Tokens',
+      type: 'detected',
     },
   ]
 

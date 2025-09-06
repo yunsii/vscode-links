@@ -92,15 +92,31 @@
           ],
           "description": "Remote resources to open: set to an object with `url` and `project`. Leave unset (null) to disable."
         },
-        "links.sharedTitlePrefix": {
-          "type": "string",
-          "default": "[shared] ",
-          "description": "Prefix added to titles from the shared remote project"
-        },
-        "links.remoteTitlePrefix": {
-          "type": "string",
-          "default": "[remote] ",
-          "description": "Prefix added to titles from the current remote project"
+        "links.customIcons": {
+          "type": "object",
+          "description": "Custom icons for different link types",
+          "properties": {
+            "local": {
+              "type": "string",
+              "default": "folder",
+              "description": "Icon for local links"
+            },
+            "detected": {
+              "type": "string",
+              "default": "eye",
+              "description": "Icon for auto-detected links"
+            },
+            "remote-project": {
+              "type": "string",
+              "default": "repo",
+              "description": "Icon for remote project links"
+            },
+            "remote-shared": {
+              "type": "string",
+              "default": "share",
+              "description": "Icon for shared remote links"
+            }
+          }
         }
       }
     },
@@ -108,8 +124,76 @@
       {
         "command": "links.open",
         "title": "Links Open ..."
+      },
+      {
+        "command": "links.refresh",
+        "title": "Refresh Links",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "links.enterSearch",
+        "title": "Enter Search Mode",
+        "icon": "$(search)"
+      },
+      {
+        "command": "links.exitSearch",
+        "title": "Exit Search Mode",
+        "icon": "$(close)"
+      },
+      {
+        "command": "links.openUrl",
+        "title": "Open Link"
+      },
+      {
+        "command": "links.copyUrl",
+        "title": "Copy Link URL"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "linksView",
+          "title": "Links",
+          "icon": "res/icon-activitybar.svg"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "linksTree",
+          "name": "Project Links",
+          "contextualTitle": "Links",
+          "icon": "res/icon.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "links.refresh",
+          "when": "view == linksTree",
+          "group": "navigation"
+        },
+        {
+          "command": "links.enterSearch",
+          "when": "view == linksTree && !links.isSearchMode",
+          "group": "navigation"
+        },
+        {
+          "command": "links.exitSearch",
+          "when": "view == linksTree && links.isSearchMode",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "links.copyUrl",
+          "when": "view == linksTree && viewItem == linkItem",
+          "group": "7_modification@2"
+        }
+      ]
+    }
   },
   "scripts": {
     "build": "tsup src/index.ts --external vscode",

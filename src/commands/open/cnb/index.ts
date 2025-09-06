@@ -27,6 +27,7 @@ export async function getCnbRepoResources(onError: (err: unknown) => void) {
       const currentFileLink: BaseLinkResource = {
         url: getCnbFileUrl(groups, repo, currentBranch, currentFileRelativePath),
         title: 'CNB Repo Current File',
+        type: 'detected',
       }
       return [...result, currentFileLink]
     }

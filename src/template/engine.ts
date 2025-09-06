@@ -82,6 +82,7 @@ export function renderResource(resource: BaseLinkResource, context: JsonObject):
     url: renderedUrl,
     title: renderedTitle,
     description: renderedDescription,
+    type: resource.type,
     meta: resource.meta,
   }
 

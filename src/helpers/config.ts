@@ -1,9 +1,12 @@
+import { defineConfigObject } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
 import { getCnbRepoResources } from '@/commands/open/cnb'
 import { getCodingRepoResources } from '@/commands/open/coding'
 import { getGithubRepoResources } from '@/commands/open/github'
 import { getRemoteResources } from '@/commands/open/remote'
+import type { NestedScopedConfigs } from '@/generated/meta'
+import { scopedConfigs } from '@/generated/meta'
 import { getErrorMessage } from '@/helpers/errors'
 import { getCurrentRepoUrl } from '@/helpers/git'
 import type { BaseLinkResource } from '@/helpers/schemas'
@@ -11,34 +14,21 @@ import { getCurrentWorkspace } from '@/helpers/workspaces'
 import { renderResources } from '@/template/engine'
 import { logger } from '@/utils'
 
-export function getExtensionConfig() {
-  return vscode.workspace.getConfiguration('links')
-}
+// 使用 vscode-ext-gen 生成的类型定义，忽略 remoteResources 类型并通过 & 声明
+export const config = defineConfigObject<NestedScopedConfigs & {
+  remoteResources: { url: string, project?: string } | null
+}>(
+  scopedConfigs.scope,
+  scopedConfigs.defaults,
+)
 
 export function getExtensionLocalResources() {
-  const linksConfig = getExtensionConfig()
-  const resources = linksConfig.get<BaseLinkResource[]>('resources')
+  const localResources = config.resources
 
-  return resources || []
-}
-
-export function getExtensionRemoteResourcesConfig() {
-  const linksConfig = getExtensionConfig()
-  const remoteResourcesConfig = linksConfig.get<{ url: string, project?: string } | null>('remoteResources')
-
-  return remoteResourcesConfig
-}
-
-export function getSharedTitlePrefix() {
-  const linksConfig = getExtensionConfig()
-  const prefix = linksConfig.get<string>('sharedTitlePrefix')
-  return typeof prefix === 'string' ? prefix : '[shared] '
-}
-
-export function getRemoteTitlePrefix() {
-  const linksConfig = getExtensionConfig()
-  const prefix = linksConfig.get<string>('remoteTitlePrefix')
-  return typeof prefix === 'string' ? prefix : '[remote] '
+  return (localResources || []).map((resource) => ({
+    ...resource,
+    type: 'local' as const,
+  }))
 }
 
 // In-memory cache for computed resources. Use promise dedupe to avoid concurrent work.
@@ -81,7 +71,7 @@ export async function getAllLinkResources() {
       logger.error(getErrorMessage(err))
     }
 
-    const result = [
+    const result: BaseLinkResource[] = [
       ...getExtensionLocalResources(),
       ...(await getCodingRepoResources(handleErrorDefault)),
       ...(await getCnbRepoResources(handleErrorDefault)),
