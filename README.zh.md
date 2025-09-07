@@ -88,6 +88,27 @@
 
 <!-- configs -->
 
+### 远程资源示例
+
+要在 `.vscode/settings.json` 中使用远程 CSV 资源，请添加以下配置：
+
+```jsonc
+{
+  "links.remoteResources": {
+    "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlzHErycXFRcNf2u9kB3SndusKyGaAEmoh2gueEKEtkTaibfMKKgOonlJhgBArqKrKJJlXthTo7LFN/pub?gid=0&single=true&output=csv",
+    "project": "my-project"
+  }
+}
+```
+
+CSV 文件应包含以下列：`project`（必填）、`url`（必填）、`title`（必填）、`description`（可选）。
+
+**工作原理：**
+
+- `project` 字段与配置的项目名匹配的链接显示为**项目专用链接**
+- `project` 字段为 `"#shared-links"` 的链接显示为**共享团队链接**
+- 其他链接会被自动过滤掉
+
 ## 路线图
 
 - [ ] 支持多语言本地化

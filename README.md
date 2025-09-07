@@ -43,17 +43,17 @@
 
 1. Add your project links to `.vscode/settings.json`:
 
-   ```jsonc
-   {
-     "links.resources": [
-       {
-         "url": "https://github.com/yunsii/vscode-links",
-         "title": "GitHub Repository"
-       }
-       // Add more links as needed
-     ]
-   }
-   ```
+```jsonc
+{
+  "links.resources": [
+    {
+      "url": "https://github.com/yunsii/vscode-links",
+      "title": "GitHub Repository"
+    }
+    // Add more links as needed
+  ]
+}
+```
 
 2. Open the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette) (<kbd>Ctrl+Shift+P</kbd> or <kbd>Cmd+Shift+P</kbd> on **macOS**).
 
@@ -87,6 +87,27 @@
 | `links.customIcons`     | Custom icons for different link types                                                               | `object`    | `{ "local": "folder", "detected": "eye", "remote-project": "repo", "remote-shared": "share" }` |
 
 <!-- configs -->
+
+### Remote Resources Example
+
+To use remote CSV resources, add this to your `.vscode/settings.json`:
+
+```jsonc
+{
+  "links.remoteResources": {
+    "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlzHErycXFRcNf2u9kB3SndusKyGaAEmoh2gueEKEtkTaibfMKKgOonlJhgBArqKrKJJlXthTo7LFN/pub?gid=0&single=true&output=csv",
+    "project": "my-project"
+  }
+}
+```
+
+The CSV file should have columns: `project` (required), `url` (required), `title` (required), `description` (optional).
+
+**How it works:**
+
+- Links with `project` matching your configured project name appear as **project-specific links**
+- Links with `project: "#shared-links"` appear as **shared team links**
+- Other links are filtered out automatically
 
 ## Roadmap
 
