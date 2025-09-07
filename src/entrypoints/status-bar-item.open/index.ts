@@ -1,16 +1,17 @@
-import { watch } from 'reactive-vscode'
+import { extensionContext, watch } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
 import { logger } from '@/utils'
 
-import { linksStore } from '../store/links'
+import { commands } from '../../generated/meta'
+import { linksStore } from '../../store/links'
 
-export function setupStatusBarItem(context: vscode.ExtensionContext) {
+export function setupStatusBarItemOpen() {
   const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100)
-  statusBarItem.command = 'links.open'
+  statusBarItem.command = commands.open
   statusBarItem.tooltip = 'Open project links'
 
-  context.subscriptions.push(statusBarItem)
+  extensionContext.value?.subscriptions.push(statusBarItem)
 
   const updateStatusBar = () => {
     const total = linksStore.totalLinks

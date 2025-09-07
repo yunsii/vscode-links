@@ -1,10 +1,10 @@
-import { ref } from 'reactive-vscode'
+import { extensionContext, ref } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
-import { getCnbRepoResources } from '@/commands/open/cnb'
-import { getCodingRepoResources } from '@/commands/open/coding'
-import { getGithubRepoResources } from '@/commands/open/github'
-import { getRemoteResources } from '@/commands/open/remote'
+import { getCnbRepoResources } from '@/entrypoints/command.open/cnb'
+import { getCodingRepoResources } from '@/entrypoints/command.open/coding'
+import { getGithubRepoResources } from '@/entrypoints/command.open/github'
+import { getRemoteResources } from '@/entrypoints/command.open/remote'
 import { getExtensionLocalResources } from '@/helpers/config'
 import { getErrorMessage } from '@/helpers/errors'
 import type { BaseLinkResource } from '@/helpers/schemas'
@@ -120,6 +120,20 @@ export class LinksStore {
     await this.loadResources()
   }
 
+  // Setup auto-clear cache on workspace events
+  setupAutoClearCache() {
+    extensionContext.value?.subscriptions.push(
+      vscode.workspace.onDidChangeConfiguration((e) => {
+        if (e.affectsConfiguration('links')) {
+          this.clearCache()
+        }
+      }),
+      vscode.workspace.onDidChangeWorkspaceFolders(() => {
+        this.clearCache()
+      }),
+    )
+  }
+
   // Computed properties
   get totalLinks(): number {
     return this.resources.value.length
@@ -144,7 +158,7 @@ export class LinksStore {
 // Create singleton instance
 export const linksStore = new LinksStore()
 
-// Auto-load resources on store creation (non-blocking)
+// Auto-load resources and setup cache clearing on store creation (non-blocking)
 setTimeout(() => {
   logger.info('Starting auto-load of link resources...')
   linksStore.loadResources()
@@ -161,4 +175,9 @@ setTimeout(() => {
       linksStore.isLoading.value = false
       logger.info('Auto-load process finished')
     })
+
+  // Auto-setup cache clearing listeners
+  logger.info('Setting up auto-clear cache listeners...')
+  linksStore.setupAutoClearCache()
+  logger.info('Auto-clear cache listeners setup completed')
 }, 0)

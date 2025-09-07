@@ -1,6 +1,6 @@
 import type { JsonObject } from 'type-fest'
 
-import { ensureGitHubRepoUrl, parseGitHubRepoUrl } from '@/commands/open/github/helpers'
+import { ensureGitHubRepoUrl, parseGitHubRepoUrl } from '@/entrypoints/command.open/github/helpers'
 
 import type { TemplateProvider } from './types'
 

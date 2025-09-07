@@ -1,6 +1,7 @@
 import { useCommand } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
+import { commands } from '../../generated/meta'
 import { getErrorMessage } from '../../helpers/errors'
 import { getIconForType } from '../../helpers/icons'
 import { withLoadingStatus } from '../../helpers/loading'
@@ -9,8 +10,8 @@ import { processLinkDisplay } from '../../helpers/url'
 import { linksStore } from '../../store/links'
 import { logger } from '../../utils'
 
-export async function addLinksOpenCommand() {
-  useCommand('links.open', async () => {
+export async function addCommandOpen() {
+  useCommand(commands.open, async () => {
     try {
       const resources = await withLoadingStatus(linksStore.loadResources(), { message: 'Link resources are loading...', delayMs: 1000 })
 

@@ -1,9 +1,10 @@
 import * as vscode from 'vscode'
 
-import { getIconForType } from '../helpers/icons'
-import { processLinkDisplay } from '../helpers/url'
+import { commands } from '../../generated/meta'
+import { getIconForType } from '../../helpers/icons'
+import { processLinkDisplay } from '../../helpers/url'
 
-import type { BaseLinkResource, LinkResourceType } from '../helpers/schemas'
+import type { BaseLinkResource, LinkResourceType } from '../../helpers/schemas'
 
 export class LinkItem extends vscode.TreeItem {
   constructor(public readonly resource: BaseLinkResource) {
@@ -17,7 +18,7 @@ export class LinkItem extends vscode.TreeItem {
     this.description = shortUrl
     this.contextValue = 'linkItem'
     this.command = {
-      command: 'links.openUrl',
+      command: commands.openUrl,
       title: 'Open Link',
       arguments: [resource],
     }

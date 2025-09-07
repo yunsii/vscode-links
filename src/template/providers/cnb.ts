@@ -1,6 +1,6 @@
 import type { JsonObject } from 'type-fest'
 
-import { ensureCnbRepoUrl, parseCnbRepoUrl } from '../../commands/open/cnb/helpers'
+import { ensureCnbRepoUrl, parseCnbRepoUrl } from '../../entrypoints/command.open/cnb/helpers'
 
 import type { TemplateProvider } from './types'
 

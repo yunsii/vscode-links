@@ -3,14 +3,14 @@ import * as vscode from 'vscode'
 
 import type { TreeViewNode } from 'reactive-vscode'
 
-import { CATEGORY_LABELS, CATEGORY_MESSAGES } from '../constants'
-import { openLinkResource } from '../helpers/open'
-import { processLinkDisplay } from '../helpers/url'
-import { setupStatusBarItem } from '../status-bar-item'
-import { linksStore } from '../store/links'
+import { categoryLabels, categoryMessages } from '../../constants'
+import { commands } from '../../generated/meta'
+import { openLinkResource } from '../../helpers/open'
+import { processLinkDisplay } from '../../helpers/url'
+import { linksStore } from '../../store/links'
 import { CategoryItem, EmptyItem, LinkItem } from './items'
 
-import type { BaseLinkResource } from '../helpers/schemas'
+import type { BaseLinkResource } from '../../helpers/schemas'
 
 export const useLinksTreeView = createSingletonComposable(() => {
   const searchQuery = ref('')
@@ -33,10 +33,10 @@ export const useLinksTreeView = createSingletonComposable(() => {
 
     // Create category nodes
     const categories = [
-      { label: CATEGORY_LABELS.local, category: 'local' as const },
-      { label: CATEGORY_LABELS.detected, category: 'detected' as const },
-      { label: CATEGORY_LABELS['remote-project'], category: 'remote-project' as const },
-      { label: CATEGORY_LABELS['remote-shared'], category: 'remote-shared' as const },
+      { label: categoryLabels.local, category: 'local' as const },
+      { label: categoryLabels.detected, category: 'detected' as const },
+      { label: categoryLabels['remote-project'], category: 'remote-project' as const },
+      { label: categoryLabels['remote-shared'], category: 'remote-shared' as const },
     ]
 
     return categories.map((cat) => {
@@ -62,7 +62,7 @@ export const useLinksTreeView = createSingletonComposable(() => {
           }]
 
       return {
-        treeItem: new CategoryItem(cat.label, cat.category, CATEGORY_MESSAGES, hasLinks),
+        treeItem: new CategoryItem(cat.label, cat.category, categoryMessages, hasLinks),
         children,
       }
     })
@@ -85,11 +85,8 @@ export const useLinksTreeView = createSingletonComposable(() => {
   }
 })
 
-export function setupViewsAndCommands(context: vscode.ExtensionContext) {
+export function setupViewLinks() {
   const { view, setSearchQuery, refresh } = useLinksTreeView()
-
-  // Setup status bar item
-  setupStatusBarItem(context)
 
   const isSearchMode = ref(false)
   const searchContextKey = 'links.isSearchMode'
@@ -97,11 +94,11 @@ export function setupViewsAndCommands(context: vscode.ExtensionContext) {
   useVscodeContext(searchContextKey, () => isSearchMode.value)
 
   useCommands({
-    'links.openUrl': async (resource: BaseLinkResource) => {
+    [commands.openUrl]: async (resource: BaseLinkResource) => {
       await openLinkResource(resource)
     },
-    'links.refresh': () => refresh(),
-    'links.enterSearch': async () => {
+    [commands.refresh]: () => refresh(),
+    [commands.enterSearch]: async () => {
       const query = await vscode.window.showInputBox({
         placeHolder: 'Search links...',
         prompt: 'Enter search term to filter links',
@@ -111,11 +108,11 @@ export function setupViewsAndCommands(context: vscode.ExtensionContext) {
         isSearchMode.value = true
       }
     },
-    'links.exitSearch': () => {
+    [commands.exitSearch]: () => {
       setSearchQuery('')
       isSearchMode.value = false
     },
-    'links.copyUrl': async (item: any) => {
+    [commands.copyUrl]: async (item: any) => {
       if (item && item.url) {
         await vscode.env.clipboard.writeText(item.url)
         vscode.window.showInformationMessage('Link URL copied to clipboard!')

@@ -1,6 +1,6 @@
 import type { JsonObject } from 'type-fest'
 
-import { ensureCodingRepoUrl, parseCodingRepoUrl } from '@/commands/open/coding/helpers'
+import { ensureCodingRepoUrl, parseCodingRepoUrl } from '@/entrypoints/command.open/coding/helpers'
 
 import type { TemplateProvider } from './types'
 

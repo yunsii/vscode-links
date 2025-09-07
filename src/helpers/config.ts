@@ -1,17 +1,7 @@
 import { defineConfigObject } from 'reactive-vscode'
-import * as vscode from 'vscode'
 
-import { getCnbRepoResources } from '@/commands/open/cnb'
-import { getCodingRepoResources } from '@/commands/open/coding'
-import { getGithubRepoResources } from '@/commands/open/github'
-import { getRemoteResources } from '@/commands/open/remote'
 import type { NestedScopedConfigs } from '@/generated/meta'
 import { scopedConfigs } from '@/generated/meta'
-import { getErrorMessage } from '@/helpers/errors'
-import { getCurrentRepoUrl } from '@/helpers/git'
-import type { BaseLinkResource } from '@/helpers/schemas'
-import { getCurrentWorkspace } from '@/helpers/workspaces'
-import { logger } from '@/utils'
 
 // 使用 vscode-ext-gen 生成的类型定义，忽略 remoteResources 类型并通过 & 声明
 export const config = defineConfigObject<NestedScopedConfigs & {
@@ -28,90 +18,4 @@ export function getExtensionLocalResources() {
     ...resource,
     type: 'local' as const,
   }))
-}
-
-// In-memory cache for computed resources. Use promise dedupe to avoid concurrent work.
-let cachedResources: BaseLinkResource[] | null = null
-let cachedPromise: Promise<BaseLinkResource[]> | null = null
-
-// Event emitter for cache changes
-const cacheChangeEmitter = new vscode.EventEmitter<void>()
-
-export const onCacheChange = cacheChangeEmitter.event
-
-export function clearLinkResourcesCache() {
-  cachedResources = null
-  cachedPromise = null
-  cacheChangeEmitter.fire()
-}
-
-/**
- * Helper to auto-clear cache on common workspace events.
- * Call from your extension activation and pass the extension context subscriptions.
- */
-export function setupLinkResourcesCacheAutoClear(subscriptions: vscode.Disposable[] = [], onCacheCleared?: () => void) {
-  subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration('links')) {
-        clearLinkResourcesCache()
-        onCacheCleared?.()
-      }
-    }),
-    vscode.workspace.onDidChangeWorkspaceFolders(() => {
-      clearLinkResourcesCache()
-      onCacheCleared?.()
-    }),
-  )
-}
-
-export async function getAllLinkResources() {
-  if (cachedResources) {
-    return cachedResources
-  }
-
-  if (cachedPromise) {
-    return cachedPromise
-  }
-
-  cachedPromise = (async () => {
-    const handleErrorDefault = (err: unknown) => {
-      logger.error(getErrorMessage(err))
-    }
-
-    const result: BaseLinkResource[] = [
-      ...getExtensionLocalResources(),
-      ...(await getCodingRepoResources(handleErrorDefault)),
-      ...(await getCnbRepoResources(handleErrorDefault)),
-      ...(await getGithubRepoResources(handleErrorDefault)),
-      ...(await getRemoteResources((error: unknown) => {
-        const errMsg = getErrorMessage(error)
-        const message = `Failed to get remote resources: ${errMsg}`
-        logger.error(message)
-        vscode.window.showWarningMessage(message)
-      })),
-    ].filter(Boolean)
-
-    // render templates with a minimal context (workspace path + repo url)
-    if (result.length === 0) {
-      // keep cache cleared on failure
-      clearLinkResourcesCache()
-      throw new Error('No links resources')
-    }
-
-    try {
-      const workspace = await getCurrentWorkspace()
-      const repoUrl = await getCurrentRepoUrl(workspace)
-      // Return raw resources without rendering
-      cachedResources = result
-      cachedPromise = null
-      return result
-    } catch (err) {
-      // if getting workspace/repo fails, still cache raw result
-      cachedResources = result
-      cachedPromise = null
-      return result
-    }
-  })()
-
-  return cachedPromise
 }
