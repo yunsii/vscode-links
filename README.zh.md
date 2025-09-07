@@ -6,7 +6,7 @@
 
 # VS Code Links
 
-> <p>为项目链接提供更好的用户体验</p>
+> <p>追求项目链接的更好用户体验</p>
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/yuns.links?logo=data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAuODY1IDMuNDQ4bC02LjU4My0zLjE2N2MtMC43NjYtMC4zNy0xLjY3Ny0wLjIxNC0yLjI3NiAwLjM4NWwtMTIuNjA5IDExLjUwNS01LjQ5NS00LjE2N2MtMC41MS0wLjM5MS0xLjIyOS0wLjM1OS0xLjcwMyAwLjA3M2wtMS43NiAxLjYwNGMtMC41ODMgMC41MjYtMC41ODMgMS40NDMtMC4wMDUgMS45NjlsNC43NjYgNC4zNDktNC43NjYgNC4zNDljLTAuNTc4IDAuNTI2LTAuNTc4IDEuNDQzIDAuMDA1IDEuOTY5bDEuNzYgMS42MDRjMC40NzkgMC40MzIgMS4xOTMgMC40NjQgMS43MDMgMC4wNzNsNS40OTUtNC4xNzIgMTIuNjE1IDExLjUxYzAuNTk0IDAuNTk5IDEuNTA1IDAuNzU1IDIuMjcxIDAuMzg1bDYuNTg5LTMuMTcyYzAuNjkzLTAuMzMzIDEuMTMtMS4wMzEgMS4xMy0xLjgwMnYtMjEuNDk1YzAtMC43NjYtMC40NDMtMS40NjktMS4xMzUtMS44MDJ6TTI0LjAwNSAyMy4yNjZsLTkuNTczLTcuMjY2IDkuNTczLTcuMjY2eiIvPjwvc3ZnPg==&logoColor=%23000&label=VS%20Code%20Marketplace&labelColor=%23FAFAFA&color=%23212121)](https://marketplace.visualstudio.com/items?itemName=yuns.links)
 [![Made with reactive-vscode](https://img.shields.io/badge/made_with-reactive--vscode-212121?style=flat&labelColor=fff&logo=visual-studio-code&logoColor=fff)](https://kermanx.github.io/reactive-vscode/)
@@ -32,7 +32,7 @@
 
 - 在 VS Code 中初始化并管理与项目相关的链接。
 - 通过命令面板快速访问项目链接。
-- 支持自定义链接资源（本地或远程）。
+- 支持自定义链接资源。
 
 ## 使用
 
@@ -60,9 +60,14 @@
 
 <!-- commands -->
 
-| Command      | Title          |
-| ------------ | -------------- |
-| `links.open` | Links Open ... |
+| Command             | Title          |
+| ------------------- | -------------- |
+| `links.open`        | Links Open ... |
+| `links.refresh`     | 刷新链接       |
+| `links.enterSearch` | 进入搜索模式   |
+| `links.exitSearch`  | 退出搜索模式   |
+| `links.openUrl`     | 打开链接       |
+| `links.copyUrl`     | 复制链接 URL   |
 
 <!-- commands -->
 
@@ -70,10 +75,11 @@
 
 <!-- configs -->
 
-| 键                      | 描述                                                                              | 类型            | 默认 |
-| ----------------------- | --------------------------------------------------------------------------------- | --------------- | ---- |
-| `links.resources`       | 要打开的本地资源列表                                                              | `array`         | ``   |
-| `links.remoteResources` | 远程资源配置（对象，包含 `url` 与 `project`）。不设置或为 `null` 则禁用远程资源。 | `object / null` | ``   |
+| 键                      | 描述                                                                              | 类型            | 默认                                                                                           |
+| ----------------------- | --------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------- |
+| `links.resources`       | 要打开的本地资源列表                                                              | `array`         | ``                                                                                             |
+| `links.remoteResources` | 远程资源配置（对象，包含 `url` 与 `project`）。不设置或为 `null` 则禁用远程资源。 | `object / null` | ``                                                                                             |
+| `links.customIcons`     | 不同链接类型的自定义图标                                                          | `object`        | `{ "local": "folder", "detected": "eye", "remote-project": "repo", "remote-shared": "share" }` |
 
 <!-- configs -->
 
