@@ -1,14 +1,95 @@
-import { ref, useCommands, useVscodeContext } from 'reactive-vscode'
+import { computed, createSingletonComposable, ref, useCommands, useTreeView, useVscodeContext } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
+import type { TreeViewNode } from 'reactive-vscode'
+
+import { CATEGORY_LABELS, CATEGORY_MESSAGES } from '../constants'
 import { openLinkResource } from '../helpers/open'
-import { LinksProvider } from './provider'
+import { processLinkDisplay } from '../helpers/url'
+import { setupStatusBarItem } from '../status-bar-item'
+import { linksStore } from '../store/links'
+import { CategoryItem, EmptyItem, LinkItem } from './items'
 
 import type { BaseLinkResource } from '../helpers/schemas'
 
-export function setupViewsAndCommands() {
-  const provider = new LinksProvider()
-  vscode.window.registerTreeDataProvider('linksTree', provider)
+export const useLinksTreeView = createSingletonComposable(() => {
+  const searchQuery = ref('')
+
+  // Create reactive tree data
+  const treeData = computed((): TreeViewNode[] => {
+    // Show loading state
+    if (linksStore.isLoading.value) {
+      return [{
+        treeItem: new EmptyItem('Loading link resources...'),
+      }]
+    }
+
+    // Show error state
+    if (linksStore.error.value) {
+      return [{
+        treeItem: new EmptyItem('Failed to load link resources'),
+      }]
+    }
+
+    // Create category nodes
+    const categories = [
+      { label: CATEGORY_LABELS.local, category: 'local' as const },
+      { label: CATEGORY_LABELS.detected, category: 'detected' as const },
+      { label: CATEGORY_LABELS['remote-project'], category: 'remote-project' as const },
+      { label: CATEGORY_LABELS['remote-shared'], category: 'remote-shared' as const },
+    ]
+
+    return categories.map((cat) => {
+      const linksByType = linksStore.linksByType
+      const resources = linksByType[cat.category] || []
+
+      // Filter by search query
+      const filteredResources = searchQuery.value
+        ? resources.filter((resource) => {
+            const { label, detail } = processLinkDisplay(resource)
+            const query = searchQuery.value.toLowerCase()
+            return label.toLowerCase().includes(query) || detail.toLowerCase().includes(query) || resource.url.toLowerCase().includes(query)
+          })
+        : resources
+
+      const hasLinks = filteredResources.length > 0
+      const children: TreeViewNode[] = hasLinks
+        ? filteredResources.map((resource) => ({
+            treeItem: new LinkItem(resource),
+          }))
+        : [{
+            treeItem: new EmptyItem('No links found'),
+          }]
+
+      return {
+        treeItem: new CategoryItem(cat.label, cat.category, CATEGORY_MESSAGES, hasLinks),
+        children,
+      }
+    })
+  })
+
+  // Create tree view with reactive data
+  const view = useTreeView('linksTree', treeData, {
+    title: () => `Links (${linksStore.totalLinks})`,
+  })
+
+  // Search functionality
+  const setSearchQuery = (query: string) => {
+    searchQuery.value = query
+  }
+
+  return {
+    view,
+    setSearchQuery,
+    refresh: () => linksStore.refresh(),
+  }
+})
+
+export function setupViewsAndCommands(context: vscode.ExtensionContext) {
+  const { view, setSearchQuery, refresh } = useLinksTreeView()
+
+  // Setup status bar item
+  setupStatusBarItem(context)
 
   const isSearchMode = ref(false)
   const searchContextKey = 'links.isSearchMode'
@@ -19,19 +100,19 @@ export function setupViewsAndCommands() {
     'links.openUrl': async (resource: BaseLinkResource) => {
       await openLinkResource(resource)
     },
-    'links.refresh': () => provider.refresh(),
+    'links.refresh': () => refresh(),
     'links.enterSearch': async () => {
       const query = await vscode.window.showInputBox({
         placeHolder: 'Search links...',
         prompt: 'Enter search term to filter links',
       })
       if (query !== undefined) {
-        provider.setSearchQuery(query)
+        setSearchQuery(query)
         isSearchMode.value = true
       }
     },
     'links.exitSearch': () => {
-      provider.setSearchQuery('')
+      setSearchQuery('')
       isSearchMode.value = false
     },
     'links.copyUrl': async (item: any) => {
@@ -41,4 +122,6 @@ export function setupViewsAndCommands() {
       }
     },
   })
+
+  return view
 }

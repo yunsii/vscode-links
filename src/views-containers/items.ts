@@ -41,12 +41,10 @@ export class EmptyItem extends vscode.TreeItem {
 }
 
 export class CategoryItem extends vscode.TreeItem {
-  constructor(public readonly label: string, public readonly category: string, public readonly children: (LinkItem | EmptyItem)[], private messages?: Record<string, string>) {
-    const isEmpty = children.length === 0
-    const displayLabel = isEmpty && messages ? `${label} (${messages[category]})` : label
-    super(displayLabel, isEmpty ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Expanded)
+  constructor(public readonly label: string, public readonly category: string, private messages?: Record<string, string>, private hasLinks: boolean = true) {
+    super(label, hasLinks ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None)
     this.iconPath = this.getIconForCategory(category)
-    this.tooltip = displayLabel
+    this.tooltip = label
   }
 
   private getIconForCategory(category: string): vscode.ThemeIcon {

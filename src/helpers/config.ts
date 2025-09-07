@@ -34,24 +34,32 @@ export function getExtensionLocalResources() {
 let cachedResources: BaseLinkResource[] | null = null
 let cachedPromise: Promise<BaseLinkResource[]> | null = null
 
+// Event emitter for cache changes
+const cacheChangeEmitter = new vscode.EventEmitter<void>()
+
+export const onCacheChange = cacheChangeEmitter.event
+
 export function clearLinkResourcesCache() {
   cachedResources = null
   cachedPromise = null
+  cacheChangeEmitter.fire()
 }
 
 /**
  * Helper to auto-clear cache on common workspace events.
  * Call from your extension activation and pass the extension context subscriptions.
  */
-export function setupLinkResourcesCacheAutoClear(subscriptions: vscode.Disposable[] = []) {
+export function setupLinkResourcesCacheAutoClear(subscriptions: vscode.Disposable[] = [], onCacheCleared?: () => void) {
   subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration('links')) {
         clearLinkResourcesCache()
+        onCacheCleared?.()
       }
     }),
     vscode.workspace.onDidChangeWorkspaceFolders(() => {
       clearLinkResourcesCache()
+      onCacheCleared?.()
     }),
   )
 }
