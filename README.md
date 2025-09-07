@@ -30,9 +30,14 @@
 
 ## Features
 
-- Initialize and manage project-related links directly from VS Code.
-- Quick access to project links via the Command Palette.
-- Supports custom link resources.
+- 🚀 **One-click setup** - Add project links directly in VS Code settings
+- ⚡ **Instant access** - Open links with just a few keystrokes via Command Palette
+- 🔧 **Custom links** - Define your own link resources with custom titles and URLs
+- 🔍 **Smart detection** - Auto-discovers links from GitHub, CODING, and CNB repositories
+- 🎯 **Dynamic templates** - Use `{{repo.url}}`, `{{git.branch}}` variables for context-aware links ([see all variables](./docs/variables.md))
+- 📊 **Tree view** - Browse organized links with search and filtering in sidebar
+- 📈 **Status bar** - Quick link count and access right from the status bar
+- 👥 **Team sharing** - Share links via remote CSV files for team collaboration
 
 ## Usage
 
@@ -85,14 +90,7 @@
 
 ## Roadmap
 
-- Support auto-parsing of git repository web links
-  - [x] GitHub
-  - [x] CODING
-  - [x] CNB
-- Automatically fetch and parse web links from a remote CSV
-- [Template variables](./docs/variables.md): support injecting repo/workspace variables into link templates
-- [ ] Localization support for multiple languages
-- [ ] Improve links management UI
+- Localization support for multiple languages
 
 ## License
 
