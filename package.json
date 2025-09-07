@@ -162,7 +162,7 @@
       "explorer": [
         {
           "id": "linksTree",
-          "name": "Project Links",
+          "name": "Links",
           "contextualTitle": "Links",
           "icon": "res/icon.svg"
         }

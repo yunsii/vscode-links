@@ -69,9 +69,7 @@ export const useLinksTreeView = createSingletonComposable(() => {
   })
 
   // Create tree view with reactive data
-  const view = useTreeView('linksTree', treeData, {
-    title: () => `Links (${linksStore.totalLinks})`,
-  })
+  const view = useTreeView('linksTree', treeData)
 
   // Search functionality
   const setSearchQuery = (query: string) => {
