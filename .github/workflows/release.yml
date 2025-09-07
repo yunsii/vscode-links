@@ -8,10 +8,7 @@ on:
 jobs:
   publish-extension:
     permissions:
-      id-token: write
       contents: write
-      actions: write
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,10 +32,9 @@ jobs:
       - run: pnpm install
 
       - name: Generate .vsix file
-        run: pnpm ext:package
+        run: pnpm run package
 
       - name: Publish Extension
-        run: pnpm ext:publish
+        run: pnpm run publish -p $VSCE_PAT
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VSCE_PAT: ${{secrets.VSCE_PAT}}
