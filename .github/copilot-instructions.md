@@ -12,25 +12,24 @@ This is a VS Code extension for managing project-related links with support for 
   - Considering alternative approaches when applicable
   - Highlighting potential impacts or considerations
 - **Code Generation**: Only proceed with code generation when explicitly requested or when the solution approach has been approved and detailed implementation is needed.
+- **Language Consistency**: Always respond in the same language as the user's question.
 
 ## Project Structure
 
 The project follows a modular structure:
 
 - `src/`: Main source code
-  - `index.ts`: Extension entry point
+  - `index.ts`: Extension entry point using `defineExtension()` from reactive-vscode
   - `utils.ts`: Utility functions
-  - `commands/`: Command handlers organized by type (e.g., `open/github/`, `open/coding/`)
   - `constants/`: Constant definitions and generated metadata
-  - `helpers/`: Utility modules for config, CSV, errors, git, icons, etc.
+  - `entrypoints/`: Command handlers organized by type (e.g., `command.open/github/`, `command.open/coding/`)
+  - `helpers/`: Utility modules for config, CSV, errors, git, icons, open, schemas, url, workspaces
   - `status-bar-item/`: Status bar integration
-  - `store/`: State management for links
+  - `store/`: State management for links using reactive-vscode patterns
   - `template/`: Template engine with providers for variable substitution
   - `views-containers/`: Tree view provider and item definitions
-- `test/`: Unit tests
 - `docs/`: Documentation files (e.g., variables.md)
 - `res/`: Resources like icons
-- Configuration files: `eslint.config.ts`, `vitest.config.ts`, `tsconfig.json`, etc.
 
 ## Architecture
 
@@ -38,7 +37,7 @@ The project follows a modular structure:
 - **Entry Point**: `src/index.ts` uses `defineExtension()` wrapper
 - **Core Flow**: Configuration → `getAllLinkResources()` → Categorization → Tree View Provider
 - **Key Components**:
-  - `src/commands/`: Command handlers (e.g., `links.open` quick pick)
+  - `src/entrypoints/`: Command handlers (e.g., `links.open` quick pick)
   - `src/views-containers/`: Tree view with `LinksProvider` and categorized resources
   - `src/helpers/`: Config management, caching, icons, URL processing
   - `src/template/`: Variable substitution engine with provider pattern
@@ -48,10 +47,10 @@ The project follows a modular structure:
 
 ## Key Patterns
 
-- **Reactive Config**: Use `defineConfigObject()` from reactive-vscode for settings
-- **Caching**: In-memory cache in `getAllLinkResources()` with auto-clear on config/workspace changes
+- **Reactive Config**: Use `defineConfigObject()` from reactive-vscode for settings (see `src/helpers/config.ts`)
+- **Caching**: In-memory cache in `LinksStore` with auto-clear on config/workspace changes (see `src/store/links.ts`)
 - **Resource Types**: `BaseLinkResource` with types: 'local', 'detected', 'remote-project', 'remote-shared'
-- **Template Rendering**: `buildContext()` collects workspace/repo data, `renderResource()` applies variables
+- **Template Rendering**: `buildContext()` collects workspace/repo data, `renderResource()` applies variables (see `src/template/engine.ts`)
 - **Error Handling**: Centralized in `getErrorMessage()`, with provider-specific error callbacks
 - **Icons**: Customizable via `links.customIcons` config, defaults in `getIconForType()`
 
@@ -83,14 +82,16 @@ The project follows a modular structure:
 - **Imports**: Prefer absolute paths with `@/` alias
 - **Reactive API**: Use `useCommands()`, `ref()`, `useVscodeContext()` from reactive-vscode
 - **Async Patterns**: Promise deduplication in caching, error swallowing in template providers
-- **File Structure**: Commands in subdirs by type (e.g., `commands/open/github/`), helpers grouped by function
+- **File Structure**: Commands in subdirs by type (e.g., `entrypoints/command.open/github/`), helpers grouped by function
 
 ## Examples
 
-- **Adding Command**: Use `useCommands()` in `setupViewsAndCommands()` (see `src/views-containers/index.ts`)
+- **Adding Command**: Use `useCommands()` in `setupViewsAndCommands()` (see `src/entrypoints/view.links/index.ts`)
 - **Config Access**: `config.resources` for user settings (see `src/helpers/config.ts`)
 - **Tree Items**: Extend `vscode.TreeItem` with custom properties (see `src/views-containers/items.ts`)
 - **Template Variables**: Register providers in `src/template/engine.ts` for custom context fragments
+- **State Management**: Use `LinksStore` class with reactive refs for centralized state (see `src/store/links.ts`)
+- **Error Handling**: Use `getErrorMessage()` helper for consistent error formatting (see `src/helpers/errors.ts`)
 
 ## Integration Points
 
