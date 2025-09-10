@@ -65,14 +65,14 @@
 
 <!-- commands -->
 
-| Command             | Title          |
-| ------------------- | -------------- |
-| `links.open`        | Links Open ... |
-| `links.refresh`     | 刷新链接       |
-| `links.enterSearch` | 进入搜索模式   |
-| `links.exitSearch`  | 退出搜索模式   |
-| `links.openUrl`     | 打开链接       |
-| `links.copyUrl`     | 复制链接 URL   |
+| Command             | Title                    |
+| ------------------- | ------------------------ |
+| `links.openPicker`  | Links: Open Picker       |
+| `links.refresh`     | Links: Refresh           |
+| `links.enterSearch` | Links: Enter Search Mode |
+| `links.exitSearch`  | Links: Exit Search Mode  |
+| `links.openUrl`     | Links: Open Link         |
+| `links.copyUrl`     | Links: Copy Link URL     |
 
 <!-- commands -->
 

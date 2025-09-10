@@ -122,31 +122,31 @@
     },
     "commands": [
       {
-        "command": "links.open",
-        "title": "Links Open ..."
+        "command": "links.openPicker",
+        "title": "Links: Open Picker"
       },
       {
         "command": "links.refresh",
-        "title": "Refresh Links",
+        "title": "Links: Refresh",
         "icon": "$(refresh)"
       },
       {
         "command": "links.enterSearch",
-        "title": "Enter Search Mode",
+        "title": "Links: Enter Search Mode",
         "icon": "$(search)"
       },
       {
         "command": "links.exitSearch",
-        "title": "Exit Search Mode",
+        "title": "Links: Exit Search Mode",
         "icon": "$(close)"
       },
       {
         "command": "links.openUrl",
-        "title": "Open Link"
+        "title": "Links: Open Link"
       },
       {
         "command": "links.copyUrl",
-        "title": "Copy Link URL"
+        "title": "Links: Copy Link URL"
       }
     ],
     "viewsContainers": {
@@ -169,6 +169,24 @@
       ]
     },
     "menus": {
+      "commandPalette": [
+        {
+          "command": "links.enterSearch",
+          "when": "false"
+        },
+        {
+          "command": "links.exitSearch",
+          "when": "false"
+        },
+        {
+          "command": "links.openUrl",
+          "when": "false"
+        },
+        {
+          "command": "links.copyUrl",
+          "when": "false"
+        }
+      ],
       "view/title": [
         {
           "command": "links.refresh",

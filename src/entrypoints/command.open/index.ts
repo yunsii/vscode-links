@@ -11,7 +11,7 @@ import { linksStore } from '../../store/links'
 import { logger } from '../../utils'
 
 export async function addCommandOpen() {
-  useCommand(commands.open, async () => {
+  useCommand(commands.openPicker, async () => {
     try {
       const resources = await withLoadingStatus(linksStore.loadResources(), { message: 'Link resources are loading...', delayMs: 1000 })
 

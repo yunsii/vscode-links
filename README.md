@@ -65,14 +65,14 @@
 
 <!-- commands -->
 
-| Command             | Title             |
-| ------------------- | ----------------- |
-| `links.open`        | Links Open ...    |
-| `links.refresh`     | Refresh Links     |
-| `links.enterSearch` | Enter Search Mode |
-| `links.exitSearch`  | Exit Search Mode  |
-| `links.openUrl`     | Open Link         |
-| `links.copyUrl`     | Copy Link URL     |
+| Command             | Title                    |
+| ------------------- | ------------------------ |
+| `links.openPicker`  | Links: Open Picker       |
+| `links.refresh`     | Links: Refresh           |
+| `links.enterSearch` | Links: Enter Search Mode |
+| `links.exitSearch`  | Links: Exit Search Mode  |
+| `links.openUrl`     | Links: Open Link         |
+| `links.copyUrl`     | Links: Copy Link URL     |
 
 <!-- commands -->
 
