@@ -31,6 +31,8 @@ jobs:
 
       - run: pnpm install
 
+      - run: pnpm run typecheck:preview
+
       - name: Generate .vsix file
         run: pnpm run package
 

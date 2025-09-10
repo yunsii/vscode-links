@@ -8,8 +8,8 @@ import { linksStore } from '../../store/links'
 
 export function setupStatusBarItemOpen() {
   const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100)
-  statusBarItem.command = commands.open
-  statusBarItem.tooltip = 'Open project links'
+  statusBarItem.command = commands.openPicker
+  statusBarItem.tooltip = 'Open project links picker'
 
   extensionContext.value?.subscriptions.push(statusBarItem)
 
@@ -30,7 +30,7 @@ export function setupStatusBarItemOpen() {
       statusBarItem.show()
     } else if (total > 0) {
       statusBarItem.text = `$(link) ${total}`
-      statusBarItem.tooltip = 'Open project links'
+      statusBarItem.tooltip = 'Open project links picker'
       statusBarItem.show()
     } else {
       statusBarItem.hide()
