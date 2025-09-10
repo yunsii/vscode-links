@@ -1,9 +1,8 @@
-import { getCurrentBranch, getCurrentRepoUrl } from '@/helpers/git'
-import type { BaseLinkResource } from '@/helpers/schemas'
-import { getCurrentFileRelativePath, getCurrentWorkspace } from '@/helpers/workspaces'
+import { getCurrentRepoUrl } from '@/helpers/git'
+import { getCurrentWorkspace } from '@/helpers/workspaces'
 import { logger } from '@/utils'
 
-import { ensureCodingRepoUrl, getCodingFileUrl, getCodingRepoLinks, parseCodingRepoUrl } from './helpers'
+import { ensureCodingRepoUrl, getCodingRepoLinks, parseCodingRepoUrl } from './helpers'
 
 export async function getCodingRepoResources(onError: (err: unknown) => void) {
   try {
@@ -19,19 +18,6 @@ export async function getCodingRepoResources(onError: (err: unknown) => void) {
     logger.info('Parsed CODING repo', JSON.stringify({ repo, project, team }))
 
     const result = getCodingRepoLinks(team, project, repo)
-
-    const currentBranch = await getCurrentBranch(currentWorkSpace)
-    const currentFileRelativePath = await getCurrentFileRelativePath()
-    logger.info('Current file relative path', currentFileRelativePath)
-
-    if (currentFileRelativePath) {
-      const currentFileLink: BaseLinkResource = {
-        url: getCodingFileUrl(team, project, repo, currentBranch, currentFileRelativePath),
-        title: 'CODING Repo Current File',
-        type: 'detected',
-      }
-      return [...result, currentFileLink]
-    }
     return result
   } catch (err) {
     onError(err)

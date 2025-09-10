@@ -89,6 +89,11 @@ export function getGitHubRepoLinks(owner: string, repo: string) {
       title: 'GitHub User SSH and GPG Keys',
       type: 'detected',
     },
+    {
+      url: `${repoUrl}/blob/{{git.branch}}/{{workspace.fileRelativePath}}`,
+      title: 'GitHub Repo Current File',
+      type: 'detected',
+    },
   ]
 
   return result

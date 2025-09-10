@@ -101,6 +101,11 @@ export function getCodingRepoLinks(team: string, project: string, repo: string) 
       title: 'CODING Member Access Tokens',
       type: 'detected',
     },
+    {
+      url: `${repoUrl}/tree/{{git.branch}}/{{workspace.fileRelativePath}}`,
+      title: 'CODING Repo Current File',
+      type: 'detected',
+    },
   ]
 
   return result

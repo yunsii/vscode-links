@@ -95,6 +95,11 @@ export function getCnbRepoLinks(groups: string[], repo: string) {
       title: 'CNB User Access Tokens',
       type: 'detected',
     },
+    {
+      url: `${repoUrl}/-/blob/{{git.branch}}/{{workspace.fileRelativePath}}`,
+      title: 'CNB Repo Current File',
+      type: 'detected',
+    },
   ]
 
   return result
