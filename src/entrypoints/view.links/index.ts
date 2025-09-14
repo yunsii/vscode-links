@@ -79,12 +79,11 @@ export const useLinksTreeView = createSingletonComposable(() => {
   return {
     view,
     setSearchQuery,
-    refresh: () => linksStore.refresh(),
   }
 })
 
 export function setupViewLinks() {
-  const { view, setSearchQuery, refresh } = useLinksTreeView()
+  const { view, setSearchQuery } = useLinksTreeView()
 
   const isSearchMode = ref(false)
   const searchContextKey = 'links.isSearchMode'
@@ -95,7 +94,6 @@ export function setupViewLinks() {
     [commands.openUrl]: async (resource: BaseLinkResource) => {
       await openLinkResource(resource)
     },
-    [commands.refresh]: () => refresh(),
     [commands.enterSearch]: async () => {
       const query = await vscode.window.showInputBox({
         placeHolder: 'Search links...',
