@@ -51,6 +51,16 @@ export function getCnbRepoLinks(groups: string[], repo: string) {
   const { origin, repoUrl } = getCnbRepoBaseUrls(groups, repo)
   const result: BaseLinkResource[] = [
     {
+      url: `${repoUrl}/-/blob/{{git.branch}}/{{workspace.fileRelativePath}}`,
+      title: 'CNB Repo Current File',
+      type: 'detected',
+    },
+    {
+      url: `${repoUrl}/-/tree/{{git.branch}}`,
+      title: 'CNB Repo Current Branch',
+      type: 'detected',
+    },
+    {
       url: repoUrl,
       title: 'CNB Repo',
       type: 'detected',
@@ -95,18 +105,19 @@ export function getCnbRepoLinks(groups: string[], repo: string) {
       title: 'CNB User Access Tokens',
       type: 'detected',
     },
-    {
-      url: `${repoUrl}/-/blob/{{git.branch}}/{{workspace.fileRelativePath}}`,
-      title: 'CNB Repo Current File',
-      type: 'detected',
-    },
   ]
 
   return result
 }
 
-export function getCnbFileUrl(groups: string[], repo: string, branch: string, filePath: string) {
+export function getCnbCurrentBranchUrl(groups: string[], repo: string, branch: string) {
   const { repoUrl } = getCnbRepoBaseUrls(groups, repo)
-  const fileUrl = encodeURI(`${repoUrl}/-/blob/${branch}/${filePath}`)
-  return fileUrl
+  const result = encodeURI(`${repoUrl}/-/tree/${branch}`)
+  return result
+}
+
+export function getCnbCurrentFileUrl(groups: string[], repo: string, branch: string, filePath: string) {
+  const { repoUrl } = getCnbRepoBaseUrls(groups, repo)
+  const result = encodeURI(`${repoUrl}/-/blob/${branch}/${filePath}`)
+  return result
 }

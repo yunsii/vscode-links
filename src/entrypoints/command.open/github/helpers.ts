@@ -45,6 +45,16 @@ export function getGitHubRepoLinks(owner: string, repo: string) {
 
   const result: BaseLinkResource[] = [
     {
+      url: `${repoUrl}/blob/{{git.branch}}/{{workspace.fileRelativePath}}`,
+      title: 'GitHub Repo Current File',
+      type: 'detected',
+    },
+    {
+      url: `${repoUrl}/tree/{{git.branch}}`,
+      title: 'GitHub Repo Current Branch',
+      type: 'detected',
+    },
+    {
       url: repoUrl,
       title: 'GitHub Repo',
       type: 'detected',
@@ -89,18 +99,19 @@ export function getGitHubRepoLinks(owner: string, repo: string) {
       title: 'GitHub User SSH and GPG Keys',
       type: 'detected',
     },
-    {
-      url: `${repoUrl}/blob/{{git.branch}}/{{workspace.fileRelativePath}}`,
-      title: 'GitHub Repo Current File',
-      type: 'detected',
-    },
   ]
 
   return result
 }
 
-export function getGitHubFileUrl(owner: string, repo: string, branch: string, filePath: string) {
+export function getGitHubCurrentBranchUrl(owner: string, repo: string, branch: string) {
   const { repoUrl } = getGitHubRepoBaseUrls(owner, repo)
-  const fileUrl = encodeURI(`${repoUrl}/blob/${branch}/${filePath}`)
-  return fileUrl
+  const result = encodeURI(`${repoUrl}/tree/${branch}`)
+  return result
+}
+
+export function getGitHubCurrentFileUrl(owner: string, repo: string, branch: string, filePath: string) {
+  const { repoUrl } = getGitHubRepoBaseUrls(owner, repo)
+  const result = encodeURI(`${repoUrl}/blob/${branch}/${filePath}`)
+  return result
 }
