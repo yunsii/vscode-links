@@ -1,15 +1,30 @@
 import type { JsonObject } from 'type-fest'
 
-import type { BaseLinkResource } from '@/helpers/schemas'
-import { logger } from '@/utils'
-
 import { renderTemplate } from './adapter'
 import { cnbProvider } from './providers/cnb'
 import { codingProvider } from './providers/coding'
 import { gitProvider } from './providers/git'
 import { githubProvider } from './providers/github'
 
-import type { TemplateContext, TemplateContextFragment, TemplateProvider } from './providers/types'
+import type { BaseLinkResource } from '../schemas'
+import type {
+  BuildContextOptions,
+  TemplateContext,
+  TemplateContextFragment,
+  TemplateProvider,
+} from './providers/types'
+
+export interface EngineLogger {
+  info: (...args: unknown[]) => void
+  warn: (...args: unknown[]) => void
+  error: (...args: unknown[]) => void
+}
+
+const noopLogger: EngineLogger = {
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+}
 
 const providers: TemplateProvider[] = [
   cnbProvider,
@@ -22,7 +37,13 @@ export function registerProvider(provider: TemplateProvider): void {
   providers.push(provider)
 }
 
-export async function buildContext(options: { workspacePath?: string, repoUrl?: string | null }): Promise<TemplateContext> {
+export interface BuildContextEngineOptions extends BuildContextOptions {
+  logger?: EngineLogger
+}
+
+export async function buildContext(options: BuildContextEngineOptions): Promise<TemplateContext> {
+  const logger = options.logger ?? noopLogger
+
   // collect fragments with provider id so we can preserve raw fragments for
   // backward compatibility (attached under `_raw`)
   const fragments: Array<{ id: string, frag: TemplateContextFragment }> = []

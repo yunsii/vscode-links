@@ -1,6 +1,8 @@
+import { getLinksResourcesFromRemoteCsv } from '@vscode-links/core'
+
+import type { RemoteLinkResource } from '@vscode-links/core'
+
 import { config } from '@/helpers/config'
-import { getLinksResourcesFromRemoteCsv } from '@/helpers/csv'
-import type { RemoteLinkResource } from '@/helpers/schemas'
 
 const SHARED_PROJECT = '#shared-links'
 

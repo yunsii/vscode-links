@@ -1,8 +1,7 @@
-import { getCurrentRepoUrl } from '@/helpers/git'
+import { ensureGitHubRepoUrl, getCurrentRepoUrl, getGitHubRepoLinks, parseGitHubRepoUrl } from '@vscode-links/core'
+
 import { getCurrentWorkspace } from '@/helpers/workspaces'
 import { logger } from '@/utils'
-
-import { ensureGitHubRepoUrl, getGitHubRepoLinks, parseGitHubRepoUrl } from './helpers'
 
 export async function getGithubRepoResources(onError: (err: unknown) => void) {
   try {

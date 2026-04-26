@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 
-import type { LinkResourceType } from './schemas'
+import type { LinkResourceType } from '@vscode-links/core'
 
 const iconCache = new Map<LinkResourceType, vscode.ThemeIcon>()
 

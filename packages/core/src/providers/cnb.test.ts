@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getCnbRepoLinks, parseCnbRepoUrl } from './helpers'
+import { getCnbRepoLinks, parseCnbRepoUrl } from './cnb'
 
 describe('parseCnbRepoUrl', () => {
   [

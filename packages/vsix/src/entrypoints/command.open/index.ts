@@ -1,12 +1,11 @@
+import { getErrorMessage, processLinkDisplay } from '@vscode-links/core'
 import { useCommand } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
 import { commands } from '../../generated/meta'
-import { getErrorMessage } from '../../helpers/errors'
 import { getIconForType } from '../../helpers/icons'
 import { withLoadingStatus } from '../../helpers/loading'
 import { openLinkResource } from '../../helpers/open'
-import { processLinkDisplay } from '../../helpers/url'
 import { linksStore } from '../../store/links'
 import { logger } from '../../utils'
 

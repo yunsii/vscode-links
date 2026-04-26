@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseCodingRepoUrl } from './helpers'
+import { parseCodingRepoUrl } from './coding'
 
 describe('parseCodingRepoUrl', () => {
   [
