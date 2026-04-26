@@ -22,6 +22,7 @@
 ## Table of Contents
 
 - [Features](#features)
+- [Install](#install)
 - [Usage](#usage)
 - [Commands](#commands)
 - [Configurations](#configurations)
@@ -44,6 +45,16 @@
 - 📈 **Status bar** - Quick link count and access right from the status bar
 - 👥 **Team sharing** - Share links via remote CSV files for team collaboration
 - 🦀 **Native core** - Provider parsing, template rendering, and CSV resolution all run in a Rust core shared with the CLI and the Node addon, so VS Code, your terminal picker, and any Node tool see byte-equal results
+
+## Install
+
+From the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=yuns.links) — search "Links" by `yuns` in the Extensions view, or run:
+
+```sh
+code --install-extension yuns.links
+```
+
+Offline / air-gapped: grab the per-arch `.vsix` from the [latest GitHub Release](https://github.com/yunsii/vscode-links/releases/latest) and `code --install-extension links-<platform>.vsix`.
 
 ## Usage
 
