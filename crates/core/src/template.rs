@@ -114,11 +114,13 @@ fn placeholder_re() -> &'static Regex {
 
 fn path_re() -> &'static Regex {
     static R: OnceLock<Regex> = OnceLock::new();
-    R.get_or_init(|| Regex::new(r"^[a-zA-Z_][a-zA-Z0-9_-]*(?:\.[a-zA-Z_][a-zA-Z0-9_-]*)*$").unwrap())
+    R.get_or_init(|| {
+        Regex::new(r"^[a-zA-Z_][a-zA-Z0-9_-]*(?:\.[a-zA-Z_][a-zA-Z0-9_-]*)*$").unwrap()
+    })
 }
 
 fn is_allowed(path: &str) -> bool {
-    ALLOWED_TEMPLATE_VARIABLES.iter().any(|v| *v == path)
+    ALLOWED_TEMPLATE_VARIABLES.contains(&path)
 }
 
 fn lookup<'a>(ctx: &'a Value, path: &str) -> Option<&'a Value> {
@@ -223,8 +225,7 @@ mod tests {
 
     #[test]
     fn throws_invalid_syntax_for_a_function_call() {
-        let err =
-            render_template("{{encodeURIComponent(repo.url)}}", &full_ctx()).unwrap_err();
+        let err = render_template("{{encodeURIComponent(repo.url)}}", &full_ctx()).unwrap_err();
         assert_eq!(err.reason, TemplateRenderErrorReason::InvalidSyntax);
     }
 

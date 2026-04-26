@@ -19,24 +19,32 @@ pub enum GitError {
 /// `origin` (a string with a trailing newline trimmed), or `None` when
 /// `origin` is unset or the directory is not a git repository.
 pub fn get_current_repo_url(cwd: &Path) -> Result<Option<String>, GitError> {
-    run_git(cwd, &["remote", "get-url", "origin"], "remote get-url origin")
+    run_git(
+        cwd,
+        &["remote", "get-url", "origin"],
+        "remote get-url origin",
+    )
 }
 
 /// `git -C <cwd> symbolic-ref --short HEAD`. Returns the short branch
 /// name, or `None` for detached HEAD / non-git directory.
 pub fn get_current_branch(cwd: &Path) -> Result<Option<String>, GitError> {
-    run_git(cwd, &["symbolic-ref", "--short", "HEAD"], "symbolic-ref HEAD")
+    run_git(
+        cwd,
+        &["symbolic-ref", "--short", "HEAD"],
+        "symbolic-ref HEAD",
+    )
 }
 
-fn run_git(
-    cwd: &Path,
-    args: &[&str],
-    label: &'static str,
-) -> Result<Option<String>, GitError> {
+fn run_git(cwd: &Path, args: &[&str], label: &'static str) -> Result<Option<String>, GitError> {
     let output = Command::new("git").arg("-C").arg(cwd).args(args).output()?;
     if output.status.success() {
         let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
-        if stdout.is_empty() { Ok(None) } else { Ok(Some(stdout)) }
+        if stdout.is_empty() {
+            Ok(None)
+        } else {
+            Ok(Some(stdout))
+        }
     } else {
         // Treat any non-zero exit as "no value here" rather than fail
         // hard, mirroring how the TS `getCurrentRepoUrl` returns
@@ -47,7 +55,11 @@ fn run_git(
         // For diagnostic builds, surface the error chain via the Err
         // variant so the caller can log it; resolve() collapses this
         // back to "no repo url".
-        Err(GitError::NonZero { label, code, stderr })
+        Err(GitError::NonZero {
+            label,
+            code,
+            stderr,
+        })
     }
 }
 

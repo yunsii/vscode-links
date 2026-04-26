@@ -1,0 +1,141 @@
+name: Rust
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  test:
+    name: cargo test (linux-x64)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --workspace --all-features
+
+  fmt:
+    name: cargo fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+
+  clippy:
+    name: cargo clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+
+  build:
+    name: build ${{ matrix.target }}
+    needs: test
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            triple: linux-x64-gnu
+            runs-on: ubuntu-latest
+            cross: false
+          - target: aarch64-unknown-linux-gnu
+            triple: linux-arm64-gnu
+            runs-on: ubuntu-latest
+            cross: true
+          - target: x86_64-apple-darwin
+            triple: darwin-x64
+            runs-on: macos-13
+            cross: false
+          - target: aarch64-apple-darwin
+            triple: darwin-arm64
+            runs-on: macos-14
+            cross: false
+          - target: x86_64-pc-windows-msvc
+            triple: win32-x64-msvc
+            runs-on: windows-latest
+            cross: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+
+      # Linux arm64 leg cross-compiles via Zig as the linker. Zig's
+      # cross story is hands-down the smoothest available, and
+      # cargo-zigbuild keeps cargo's UX intact.
+      - name: Install Zig (cross only)
+        if: matrix.cross
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Install cargo-zigbuild (cross only)
+        if: matrix.cross
+        run: cargo install --locked cargo-zigbuild
+
+      - name: Build CLI bin
+        shell: bash
+        run: |
+          if [ "${{ matrix.cross }}" = "true" ]; then
+            cargo zigbuild --release -p vscode-links-cli --target ${{ matrix.target }}
+          else
+            cargo build --release -p vscode-links-cli --target ${{ matrix.target }}
+          fi
+
+      - name: Build N-API addon
+        shell: bash
+        run: |
+          if [ "${{ matrix.cross }}" = "true" ]; then
+            cargo zigbuild --release -p vscode-links-napi --target ${{ matrix.target }}
+          else
+            cargo build --release -p vscode-links-napi --target ${{ matrix.target }}
+          fi
+
+      - name: Stage artefacts
+        shell: bash
+        run: |
+          mkdir -p artefacts/${{ matrix.triple }}
+          cd target/${{ matrix.target }}/release
+          case "${{ matrix.target }}" in
+            *windows*)
+              cp vscode-links.exe ../../../artefacts/${{ matrix.triple }}/
+              cp vscode_links_napi.dll ../../../artefacts/${{ matrix.triple }}/vscode-links.${{ matrix.triple }}.node
+              ;;
+            *apple*)
+              cp vscode-links ../../../artefacts/${{ matrix.triple }}/
+              cp libvscode_links_napi.dylib ../../../artefacts/${{ matrix.triple }}/vscode-links.${{ matrix.triple }}.node
+              ;;
+            *)
+              cp vscode-links ../../../artefacts/${{ matrix.triple }}/
+              cp libvscode_links_napi.so ../../../artefacts/${{ matrix.triple }}/vscode-links.${{ matrix.triple }}.node
+              ;;
+          esac
+          ls -la ../../../artefacts/${{ matrix.triple }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.triple }}
+          path: artefacts/${{ matrix.triple }}/*
+          if-no-files-found: error

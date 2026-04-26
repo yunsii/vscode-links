@@ -78,12 +78,11 @@ fn project(raw: RawSettings) -> LinksConfig {
 
     if let Some(value) = raw.remote_resources {
         // The schema's `oneOf` allows null; treat it as "not configured".
-        if !value.is_null() {
-            if let Ok(rr) = serde_json::from_value::<RemoteResources>(value) {
-                if !rr.url.is_empty() {
-                    out.remote_resources = Some(rr);
-                }
-            }
+        if !value.is_null()
+            && let Ok(rr) = serde_json::from_value::<RemoteResources>(value)
+            && !rr.url.is_empty()
+        {
+            out.remote_resources = Some(rr);
         }
     }
 

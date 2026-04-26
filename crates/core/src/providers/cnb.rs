@@ -18,9 +18,7 @@ pub struct CnbParse {
 ///
 /// Input example: `https://cnb.cool/group/sub/repo.git`.
 pub fn parse_cnb_repo_url(repo_url: &str) -> CnbParse {
-    let stripped = repo_url
-        .replacen(PREFIX, "", 1)
-        .replace(".git", "");
+    let stripped = repo_url.replacen(PREFIX, "", 1).replace(".git", "");
     let mut parts: Vec<String> = stripped.split('/').map(String::from).collect();
     let repo = parts.pop().unwrap_or_default();
     CnbParse {
@@ -58,7 +56,9 @@ pub fn get_cnb_repo_base_urls(groups: &[String], repo: &str) -> CnbBaseUrls {
 }
 
 pub fn get_cnb_repo_links(groups: &[String], repo: &str) -> Vec<BaseLinkResource> {
-    let CnbBaseUrls { origin, repo_url, .. } = get_cnb_repo_base_urls(groups, repo);
+    let CnbBaseUrls {
+        origin, repo_url, ..
+    } = get_cnb_repo_base_urls(groups, repo);
     let detected = LinkResourceType::Detected;
 
     macro_rules! row {
@@ -78,7 +78,10 @@ pub fn get_cnb_repo_links(groups: &[String], repo: &str) -> Vec<BaseLinkResource
             format!("{repo_url}/-/blob/{{{{git.branch}}}}/{{{{workspace.fileRelativePath}}}}"),
             "CNB Repo Current File"
         ),
-        row!(format!("{repo_url}/-/tree/{{{{git.branch}}}}"), "CNB Repo Current Branch"),
+        row!(
+            format!("{repo_url}/-/tree/{{{{git.branch}}}}"),
+            "CNB Repo Current Branch"
+        ),
         row!(repo_url.clone(), "CNB Repo"),
         row!(format!("{repo_url}/-/branches"), "CNB Repo Branches"),
         row!(format!("{repo_url}/-/tags"), "CNB Repo Tags"),

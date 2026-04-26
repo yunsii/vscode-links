@@ -77,7 +77,11 @@ pub fn run(argv: &[String]) -> RunResult {
                 kind,
                 clap::error::ErrorKind::DisplayHelp | clap::error::ErrorKind::DisplayVersion
             ) {
-                RunResult { exit_code: EXIT_OK, stdout: rendered, stderr: String::new() }
+                RunResult {
+                    exit_code: EXIT_OK,
+                    stdout: rendered,
+                    stderr: String::new(),
+                }
             } else {
                 RunResult {
                     exit_code: EXIT_USAGE,
@@ -93,7 +97,11 @@ pub fn run(argv: &[String]) -> RunResult {
         let help = <Cli as clap::CommandFactory>::command()
             .render_help()
             .to_string();
-        return RunResult { exit_code: EXIT_OK, stdout: help, stderr: String::new() };
+        return RunResult {
+            exit_code: EXIT_OK,
+            stdout: help,
+            stderr: String::new(),
+        };
     };
 
     run_resolve(args)
@@ -175,4 +183,3 @@ fn usage_error(msg: impl Into<String>) -> RunResult {
         stderr: format!("error: {}\n", msg.into()),
     }
 }
-

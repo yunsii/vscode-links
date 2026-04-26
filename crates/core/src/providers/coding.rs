@@ -39,11 +39,15 @@ pub fn parse_coding_repo_url(repo_url: &str) -> Result<CodingParse, CodingParseE
         return Err(CodingParseError::NotCoding);
     }
     let stripped = repo_url.replace(".git", "");
-    let mut parts: Vec<&str> = stripped.split(|c| c == '/' || c == ':').collect();
+    let mut parts: Vec<&str> = stripped.split(['/', ':']).collect();
     let repo = parts.pop().unwrap_or("").to_string();
     let project = parts.pop().unwrap_or("").to_string();
     let team = parts.pop().unwrap_or("").to_string();
-    Ok(CodingParse { team, project, repo })
+    Ok(CodingParse {
+        team,
+        project,
+        repo,
+    })
 }
 
 #[derive(Debug, Clone)]
@@ -57,12 +61,19 @@ pub fn get_coding_repo_base_urls(team: &str, project: &str, repo: &str) -> Codin
     let team_url = format!("https://{team}.coding.net");
     let project_url = format!("{team_url}/p/{project}");
     let repo_url = format!("{project_url}/d/{repo}/git");
-    CodingBaseUrls { team_url, project_url, repo_url }
+    CodingBaseUrls {
+        team_url,
+        project_url,
+        repo_url,
+    }
 }
 
 pub fn get_coding_repo_links(team: &str, project: &str, repo: &str) -> Vec<BaseLinkResource> {
-    let CodingBaseUrls { project_url, repo_url, .. } =
-        get_coding_repo_base_urls(team, project, repo);
+    let CodingBaseUrls {
+        project_url,
+        repo_url,
+        ..
+    } = get_coding_repo_base_urls(team, project, repo);
     let detected = LinkResourceType::Detected;
 
     macro_rules! row {
@@ -86,7 +97,10 @@ pub fn get_coding_repo_links(team: &str, project: &str, repo: &str) -> Vec<BaseL
         row!(format!("{repo_url}/settings"), "CODING Repo Settings"),
         row!(format!("{project_url}/all/issues"), "CODING Project Issues"),
         row!(format!("{project_url}/ci/job"), "CODING Project CI"),
-        row!(format!("{repo_url}/user/account/setting/basic"), "CODING Member Profile"),
+        row!(
+            format!("{repo_url}/user/account/setting/basic"),
+            "CODING Member Profile"
+        ),
         row!(
             format!("{repo_url}/user/account/setting/tokens"),
             "CODING Member Access Tokens"

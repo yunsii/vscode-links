@@ -37,7 +37,9 @@ pub struct HttpCsvFetcher {
 
 impl HttpCsvFetcher {
     pub fn new() -> Self {
-        Self { options: FetchOptions::default() }
+        Self {
+            options: FetchOptions::default(),
+        }
     }
 
     pub fn with_options(options: FetchOptions) -> Self {

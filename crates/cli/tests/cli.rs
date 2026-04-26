@@ -6,7 +6,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use serde_json::Value;
-use vscode_links_cli::{run, EXIT_CONFIG, EXIT_OK, EXIT_USAGE};
+use vscode_links_cli::{EXIT_CONFIG, EXIT_OK, EXIT_USAGE, run};
 
 fn tmp_dir(label: &str) -> PathBuf {
     let dir = std::env::temp_dir().join(format!(
@@ -56,7 +56,13 @@ fn rejects_resolve_without_cwd() {
 #[test]
 fn rejects_unknown_format_value() {
     let dir = tmp_dir("bad-format");
-    let r = run(&argv(&["resolve", "--cwd", dir.to_str().unwrap(), "--format", "xml"]));
+    let r = run(&argv(&[
+        "resolve",
+        "--cwd",
+        dir.to_str().unwrap(),
+        "--format",
+        "xml",
+    ]));
     assert_eq!(r.exit_code, EXIT_USAGE);
     assert!(r.stderr.contains("--format must be one of"));
     fs::remove_dir_all(&dir).ok();
@@ -77,9 +83,20 @@ fn emits_json_by_default_for_an_empty_workspace() {
 #[test]
 fn emits_ndjson_with_one_record_per_line() {
     let dir = tmp_dir("ndjson");
-    let r = run(&argv(&["resolve", "--cwd", dir.to_str().unwrap(), "--format", "ndjson"]));
+    let r = run(&argv(&[
+        "resolve",
+        "--cwd",
+        dir.to_str().unwrap(),
+        "--format",
+        "ndjson",
+    ]));
     assert_eq!(r.exit_code, EXIT_OK);
-    let lines: Vec<&str> = r.stdout.trim().split('\n').filter(|s| !s.is_empty()).collect();
+    let lines: Vec<&str> = r
+        .stdout
+        .trim()
+        .split('\n')
+        .filter(|s| !s.is_empty())
+        .collect();
     assert!(!lines.is_empty());
     let first: Value = serde_json::from_str(lines[0]).unwrap();
     assert_eq!(first["kind"], "context");
@@ -89,7 +106,13 @@ fn emits_ndjson_with_one_record_per_line() {
 #[test]
 fn emits_empty_tsv_when_no_links() {
     let dir = tmp_dir("empty-tsv");
-    let r = run(&argv(&["resolve", "--cwd", dir.to_str().unwrap(), "--format", "tsv"]));
+    let r = run(&argv(&[
+        "resolve",
+        "--cwd",
+        dir.to_str().unwrap(),
+        "--format",
+        "tsv",
+    ]));
     assert_eq!(r.exit_code, EXIT_OK);
     assert_eq!(r.stdout, "");
     fs::remove_dir_all(&dir).ok();
@@ -111,7 +134,13 @@ fn reads_vscode_settings_jsonc_and_renders_local_links_as_tsv() {
     )
     .unwrap();
 
-    let r = run(&argv(&["resolve", "--cwd", dir.to_str().unwrap(), "--format", "tsv"]));
+    let r = run(&argv(&[
+        "resolve",
+        "--cwd",
+        dir.to_str().unwrap(),
+        "--format",
+        "tsv",
+    ]));
     assert_eq!(r.exit_code, EXIT_OK, "stderr was {:?}", r.stderr);
     let rows: Vec<&str> = r.stdout.trim().split('\n').collect();
     assert_eq!(rows.len(), 1);
@@ -147,14 +176,23 @@ fn accepts_editor_context_as_json_object() {
     ]));
     assert_eq!(r.exit_code, EXIT_OK);
     let parsed: Value = serde_json::from_str(&r.stdout).unwrap();
-    assert_eq!(parsed["context"]["workspace"]["fileRelativePath"], "src/x.ts");
+    assert_eq!(
+        parsed["context"]["workspace"]["fileRelativePath"],
+        "src/x.ts"
+    );
     fs::remove_dir_all(&dir).ok();
 }
 
 #[test]
 fn rejects_malformed_editor_context() {
     let dir = tmp_dir("bad-editor-ctx");
-    let r = run(&argv(&["resolve", "--cwd", dir.to_str().unwrap(), "--editor-context", "not-json"]));
+    let r = run(&argv(&[
+        "resolve",
+        "--cwd",
+        dir.to_str().unwrap(),
+        "--editor-context",
+        "not-json",
+    ]));
     assert_eq!(r.exit_code, EXIT_USAGE);
     assert!(r.stderr.contains("--editor-context is not valid JSON"));
     fs::remove_dir_all(&dir).ok();

@@ -4,7 +4,7 @@
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 use crate::csv::{CsvFetcher, FetchError, HttpCsvFetcher, RemoteCsvRow, parse_csv};
 use crate::git::get_current_repo_url;
@@ -173,18 +173,72 @@ pub fn resolve(options: ResolveOptions<'_>) -> Result<ResolveResult, ResolveErro
         if github::ensure_github_repo_url(repo_url) {
             let p = github::parse_github_repo_url(repo_url);
             for raw in github::get_github_repo_links(&p.owner, &p.repo) {
-                render_into("detected:github", raw, &context, &mut links, &mut skipped, &mut diagnostics);
+                render_into(
+                    "detected:github",
+                    raw,
+                    &context,
+                    &mut links,
+                    &mut skipped,
+                    &mut diagnostics,
+                );
             }
         } else if cnb::ensure_cnb_repo_url(repo_url) {
             let p = cnb::parse_cnb_repo_url(repo_url);
             for raw in cnb::get_cnb_repo_links(&p.groups, &p.repo) {
-                render_into("detected:cnb", raw, &context, &mut links, &mut skipped, &mut diagnostics);
+                render_into(
+                    "detected:cnb",
+                    raw,
+                    &context,
+                    &mut links,
+                    &mut skipped,
+                    &mut diagnostics,
+                );
             }
-        } else if coding::ensure_coding_repo_url(repo_url) {
-            if let Ok(p) = coding::parse_coding_repo_url(repo_url) {
-                for raw in coding::get_coding_repo_links(&p.team, &p.project, &p.repo) {
+        } else if coding::ensure_coding_repo_url(repo_url)
+            && let Ok(p) = coding::parse_coding_repo_url(repo_url)
+        {
+            for raw in coding::get_coding_repo_links(&p.team, &p.project, &p.repo) {
+                render_into(
+                    "detected:coding",
+                    raw,
+                    &context,
+                    &mut links,
+                    &mut skipped,
+                    &mut diagnostics,
+                );
+            }
+        }
+    }
+
+    // 3. Remote CSV
+    if let Some(remote) = options.config.remote_resources.as_ref()
+        && !remote.url.is_empty()
+    {
+        let default_fetcher = HttpCsvFetcher::new();
+        let fetcher: &dyn CsvFetcher = options.fetcher.unwrap_or(&default_fetcher);
+        match fetch_and_parse_csv(fetcher, &remote.url) {
+            Ok(rows) => {
+                for row in rows {
+                    if row.url.is_empty() {
+                        continue;
+                    }
+                    let project = remote.project.as_deref().unwrap_or("");
+                    let (source, kind) = if row.project == project {
+                        ("csv:project", LinkResourceType::RemoteProject)
+                    } else if row.project == SHARED_PROJECT {
+                        ("csv:#shared-links", LinkResourceType::RemoteShared)
+                    } else {
+                        continue;
+                    };
+                    let raw = BaseLinkResource {
+                        url: row.url,
+                        title: row.title,
+                        description: row.description,
+                        r#type: kind,
+                        meta: None,
+                    };
                     render_into(
-                        "detected:coding",
+                        source,
                         raw,
                         &context,
                         &mut links,
@@ -193,53 +247,25 @@ pub fn resolve(options: ResolveOptions<'_>) -> Result<ResolveResult, ResolveErro
                     );
                 }
             }
-        }
-    }
-
-    // 3. Remote CSV
-    if let Some(remote) = options.config.remote_resources.as_ref() {
-        if !remote.url.is_empty() {
-            let default_fetcher = HttpCsvFetcher::new();
-            let fetcher: &dyn CsvFetcher = options.fetcher.unwrap_or(&default_fetcher);
-            match fetch_and_parse_csv(fetcher, &remote.url) {
-                Ok(rows) => {
-                    for row in rows {
-                        if row.url.is_empty() {
-                            continue;
-                        }
-                        let project = remote.project.as_deref().unwrap_or("");
-                        let (source, kind) = if row.project == project {
-                            ("csv:project", LinkResourceType::RemoteProject)
-                        } else if row.project == SHARED_PROJECT {
-                            ("csv:#shared-links", LinkResourceType::RemoteShared)
-                        } else {
-                            continue;
-                        };
-                        let raw = BaseLinkResource {
-                            url: row.url,
-                            title: row.title,
-                            description: row.description,
-                            r#type: kind,
-                            meta: None,
-                        };
-                        render_into(source, raw, &context, &mut links, &mut skipped, &mut diagnostics);
-                    }
+            Err(err) => {
+                if !options.fail_soft {
+                    return Err(ResolveError::Csv(err));
                 }
-                Err(err) => {
-                    if !options.fail_soft {
-                        return Err(ResolveError::Csv(err));
-                    }
-                    diagnostics.push(ResolveDiagnostic {
-                        level: DiagnosticLevel::Warn,
-                        source: "csv:fetch".to_string(),
-                        message: format!("Failed to fetch remote CSV: {err}"),
-                    });
-                }
+                diagnostics.push(ResolveDiagnostic {
+                    level: DiagnosticLevel::Warn,
+                    source: "csv:fetch".to_string(),
+                    message: format!("Failed to fetch remote CSV: {err}"),
+                });
             }
         }
     }
 
-    Ok(ResolveResult { context, links, skipped, diagnostics })
+    Ok(ResolveResult {
+        context,
+        links,
+        skipped,
+        diagnostics,
+    })
 }
 
 fn try_get_repo_url(cwd: &Path) -> Option<String> {
@@ -273,13 +299,13 @@ fn build_context(cwd: &Path, repo_url: Option<&str>, file_relative_path: Option<
                 "cnb".to_string(),
                 json!({ "repo": p.repo, "groups": p.groups.join("/") }),
             );
-        } else if coding::ensure_coding_repo_url(repo_url) {
-            if let Ok(p) = coding::parse_coding_repo_url(repo_url) {
-                repo_specific.insert(
-                    "coding".to_string(),
-                    json!({ "team": p.team, "project": p.project, "repo": p.repo }),
-                );
-            }
+        } else if coding::ensure_coding_repo_url(repo_url)
+            && let Ok(p) = coding::parse_coding_repo_url(repo_url)
+        {
+            repo_specific.insert(
+                "coding".to_string(),
+                json!({ "team": p.team, "project": p.project, "repo": p.repo }),
+            );
         }
     }
 
@@ -337,8 +363,7 @@ fn render_resource(
     context: &Value,
 ) -> Result<BaseLinkResource, RenderResourceError> {
     let url = render_template(&resource.url, context).map_err(RenderResourceError::Template)?;
-    let title =
-        render_template(&resource.title, context).map_err(RenderResourceError::Template)?;
+    let title = render_template(&resource.title, context).map_err(RenderResourceError::Template)?;
     let description = match &resource.description {
         Some(d) => Some(render_template(d, context).map_err(RenderResourceError::Template)?),
         None => None,
@@ -455,7 +480,11 @@ mod tests {
             .iter()
             .filter(|l| l.source == "detected:github")
             .collect();
-        assert!(!detected.is_empty(), "no detected:github links: {:?}", r.links);
+        assert!(
+            !detected.is_empty(),
+            "no detected:github links: {:?}",
+            r.links
+        );
         assert!(detected.iter().any(|l| l.title == "GitHub Repo"));
     }
 
@@ -484,7 +513,9 @@ https://example.com/a,Project A,, proj-x
 https://example.com/b,Shared B,,#shared-links
 https://example.com/c,Other,,other-proj
 "#;
-        let fetcher = StaticFetcher { body: body.to_string() };
+        let fetcher = StaticFetcher {
+            body: body.to_string(),
+        };
         opts.fetcher = Some(&fetcher);
         let r = resolve(opts).unwrap();
         // Note: ` proj-x` (leading space) does NOT match "proj-x" — the
@@ -492,6 +523,6 @@ https://example.com/c,Other,,other-proj
         // The shared row matches; the project row does not.
         let sources: Vec<_> = r.links.iter().map(|l| l.source.as_str()).collect();
         assert!(sources.contains(&"csv:#shared-links"));
-        assert!(!sources.iter().any(|s| *s == "csv:project"));
+        assert!(!sources.contains(&"csv:project"));
     }
 }
