@@ -134,16 +134,30 @@ jobs:
             --out ./packages/native/dist \
             --version ${{ steps.version.outputs.value }}
 
+      # `npm publish --provenance` always emits a build attestation
+      # via the OIDC id-token (requires the `id-token: write`
+      # permission, granted at the job level above).
+      #
+      # `NODE_AUTH_TOKEN` covers two cases:
+      #   - first publish (npm doesn't yet know the package, so a
+      #     trusted-publisher rule cannot exist; the token authorises
+      #     the create-and-publish);
+      #   - subsequent publishes BEFORE you've configured trusted
+      #     publishers in npm package settings.
+      # Once each package on npm has a trusted publisher pointing at
+      # this workflow, the secret is no longer needed and you can
+      # delete it from the repo + drop these env: blocks. See
+      # RELEASING.md for the full handover.
       - name: Publish per-arch packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           for d in packages/native/dist/*/; do
-            (cd "$d" && npm publish --access public)
+            (cd "$d" && npm publish --provenance --access public)
           done
 
       - name: Publish main package
         working-directory: packages/native
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: npm publish --provenance --access public
