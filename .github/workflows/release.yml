@@ -29,7 +29,7 @@ jobs:
           - rust-target: x86_64-apple-darwin
             vscode-target: darwin-x64
             triple: darwin-x64
-            runs-on: macos-13
+            runs-on: macos-14
             cross: false
           - rust-target: aarch64-apple-darwin
             vscode-target: darwin-arm64
