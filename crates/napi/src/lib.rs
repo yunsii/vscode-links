@@ -7,12 +7,12 @@
 
 #![deny(clippy::all)]
 
-use napi::bindgen_prelude::*;
 use napi::Error;
+use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use vscode_links_core::{
-    render_template as core_render_template, resolve as core_resolve, EditorContext, LinksConfig,
-    ResolveOptions,
+    EditorContext, LinksConfig, ResolveOptions, render_template as core_render_template,
+    resolve as core_resolve,
 };
 
 /// `resolve(opts)` — opts is whatever JS gives us; we deserialise it

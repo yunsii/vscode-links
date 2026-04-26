@@ -77,11 +77,20 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: pnpm
 
+      # @vscode-links/native loads the per-arch .node addon at runtime;
+      # build it for the current host before running the JS test suite
+      # so the smoke tests can exercise the real Rust path.
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Setup
         run: npm i -g @antfu/ni
 
       - name: Install
         run: nci
+
+      - name: Build native addon (host arch)
+        run: pnpm --filter ./packages/native run build
 
       - name: Build
         run: nr build

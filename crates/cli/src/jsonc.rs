@@ -118,21 +118,25 @@ mod tests {
 
     #[test]
     fn strips_line_comments() {
-        let v = parse(r#"
+        let v = parse(
+            r#"
             // a comment
             { "x": 1 } // trailing
-        "#);
+        "#,
+        );
         assert_eq!(v["x"], 1);
     }
 
     #[test]
     fn strips_block_comments() {
-        let v = parse(r#"
+        let v = parse(
+            r#"
             /* block
                spans
                multiple lines */
             { "y": 2 }
-        "#);
+        "#,
+        );
         assert_eq!(v["y"], 2);
     }
 

@@ -15,7 +15,7 @@ pub mod schemas;
 pub mod template;
 
 pub use csv::{CsvFetcher, FetchError, HttpCsvFetcher};
-pub use git::{get_current_branch, get_current_repo_url, GitError};
+pub use git::{GitError, get_current_branch, get_current_repo_url};
 pub use resolve::{
     DiagnosticLevel, EditorContext, LinksConfig, LocalLinkInput, RemoteResources,
     ResolveDiagnostic, ResolveError, ResolveOptions, ResolveResult, ResolvedLink, SkipReason,
@@ -23,6 +23,6 @@ pub use resolve::{
 };
 pub use schemas::{BaseLinkResource, LinkResourceType, RemoteLinkResource};
 pub use template::{
-    AllowedTemplateVariable, TemplateRenderError, TemplateRenderErrorReason,
-    ALLOWED_TEMPLATE_VARIABLES, render_template,
+    ALLOWED_TEMPLATE_VARIABLES, AllowedTemplateVariable, TemplateRenderError,
+    TemplateRenderErrorReason, render_template,
 };

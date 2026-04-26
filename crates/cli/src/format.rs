@@ -17,7 +17,9 @@ impl std::str::FromStr for OutputFormat {
             "json" => Ok(Self::Json),
             "ndjson" => Ok(Self::Ndjson),
             "tsv" => Ok(Self::Tsv),
-            other => Err(format!("--format must be one of json|ndjson|tsv, got {other}")),
+            other => Err(format!(
+                "--format must be one of json|ndjson|tsv, got {other}"
+            )),
         }
     }
 }
@@ -49,21 +51,36 @@ struct NdjsonContext<'a> {
 fn format_ndjson(result: &ResolveResult) -> String {
     let mut out = String::new();
     // context goes first; JS side uses { kind: "context", data: ... } too.
-    let ctx = NdjsonEnvelope { kind: "context", data: &result.context };
+    let ctx = NdjsonEnvelope {
+        kind: "context",
+        data: &result.context,
+    };
     writeln!(out, "{}", serde_json::to_string(&ctx).unwrap()).unwrap();
     for link in &result.links {
-        let envelope = NdjsonEnvelope { kind: "link", data: link };
+        let envelope = NdjsonEnvelope {
+            kind: "link",
+            data: link,
+        };
         writeln!(out, "{}", serde_json::to_string(&envelope).unwrap()).unwrap();
     }
     for skipped in &result.skipped {
-        let envelope = NdjsonEnvelope { kind: "skipped", data: skipped };
+        let envelope = NdjsonEnvelope {
+            kind: "skipped",
+            data: skipped,
+        };
         writeln!(out, "{}", serde_json::to_string(&envelope).unwrap()).unwrap();
     }
     for diag in &result.diagnostics {
-        let envelope = NdjsonEnvelope { kind: "diagnostic", data: diag };
+        let envelope = NdjsonEnvelope {
+            kind: "diagnostic",
+            data: diag,
+        };
         writeln!(out, "{}", serde_json::to_string(&envelope).unwrap()).unwrap();
     }
-    let _ = NdjsonContext { kind: "context", data: &result.context }; // keep helper compiling
+    let _ = NdjsonContext {
+        kind: "context",
+        data: &result.context,
+    }; // keep helper compiling
     out
 }
 

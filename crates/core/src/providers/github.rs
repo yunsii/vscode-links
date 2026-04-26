@@ -24,7 +24,7 @@ pub struct GitHubParse {
 ///   - `https://github.com/owner/repo.git`
 pub fn parse_github_repo_url(repo_url: &str) -> GitHubParse {
     let stripped = repo_url.replace(".git", "");
-    let mut parts: Vec<&str> = stripped.split(|c| c == '/' || c == ':').collect();
+    let mut parts: Vec<&str> = stripped.split(['/', ':']).collect();
     let repo = parts.pop().unwrap_or("").to_string();
     let owner = parts.pop().unwrap_or("").to_string();
     GitHubParse { owner, repo }
@@ -63,7 +63,10 @@ pub fn get_github_repo_links(owner: &str, repo: &str) -> Vec<BaseLinkResource> {
             format!("{repo_url}/blob/{{{{git.branch}}}}/{{{{workspace.fileRelativePath}}}}"),
             "GitHub Repo Current File"
         ),
-        row!(format!("{repo_url}/tree/{{{{git.branch}}}}"), "GitHub Repo Current Branch"),
+        row!(
+            format!("{repo_url}/tree/{{{{git.branch}}}}"),
+            "GitHub Repo Current Branch"
+        ),
         row!(repo_url.clone(), "GitHub Repo"),
         row!(format!("{repo_url}/branches"), "GitHub Repo Branches"),
         row!(format!("{repo_url}/tags"), "GitHub Repo Tags"),
@@ -72,7 +75,10 @@ pub fn get_github_repo_links(owner: &str, repo: &str) -> Vec<BaseLinkResource> {
         row!(format!("{repo_url}/settings"), "GitHub Repo Settings"),
         row!(format!("{repo_url}/issues"), "GitHub Repo Issues"),
         row!(format!("{origin}/settings"), "GitHub User Settings"),
-        row!(format!("{repo_url}/settings/keys"), "GitHub User SSH and GPG Keys"),
+        row!(
+            format!("{repo_url}/settings/keys"),
+            "GitHub User SSH and GPG Keys"
+        ),
     ]
 }
 
