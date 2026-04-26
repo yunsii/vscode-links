@@ -1,14 +1,11 @@
-import { getErrorMessage } from '@vscode-links/core'
+import { getErrorMessage, resolve } from '@vscode-links/core'
 import { extensionContext, ref } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
 import type { BaseLinkResource } from '@vscode-links/core'
 
-import { getCnbRepoResources } from '@/entrypoints/command.open/cnb'
-import { getCodingRepoResources } from '@/entrypoints/command.open/coding'
-import { getGithubRepoResources } from '@/entrypoints/command.open/github'
-import { getRemoteResources } from '@/entrypoints/command.open/remote'
-import { getExtensionLocalResources } from '@/helpers/config'
+import { config } from '@/helpers/config'
+import { getCurrentFileRelativePath, getCurrentWorkspace } from '@/helpers/workspaces'
 import { logger } from '@/utils'
 
 // Reactive state management for link resources
@@ -31,14 +28,12 @@ export class LinksStore {
   // Load resources with caching
   async loadResources(): Promise<BaseLinkResource[]> {
     if (this.cachedResources) {
-      // Ensure loading state is false when returning cached data
       this.isLoading.value = false
-      this.error.value = null // Clear error when using cache
+      this.error.value = null
       return this.cachedResources
     }
 
     if (this.cachedPromise) {
-      // If we have a pending promise, wait for it but don't set loading again
       return this.cachedPromise
     }
 
@@ -50,60 +45,51 @@ export class LinksStore {
   private async _loadResourcesInternal(): Promise<BaseLinkResource[]> {
     this.isLoading.value = true
     this.error.value = null
-    logger.info('Starting to load link resources...')
+    logger.info('Starting to load link resources via core.resolve...')
 
     try {
-      const handleErrorDefault = (err: unknown) => {
-        logger.error(getErrorMessage(err))
+      const cwd = await getCurrentWorkspace()
+      const fileRelativePath = await getCurrentFileRelativePath()
+
+      const result = await resolve({
+        cwd,
+        config: {
+          resources: config.resources,
+          remoteResources: config.remoteResources,
+        },
+        editorContext: { fileRelativePath },
+        logger,
+      })
+
+      for (const diag of result.diagnostics) {
+        const message = `${diag.source}: ${diag.message}`
+        if (diag.level === 'warn') {
+          logger.warn(message)
+          vscode.window.showWarningMessage(message)
+        } else {
+          logger.error(message)
+        }
       }
 
-      logger.info('Loading local resources...')
-      const localResources = getExtensionLocalResources()
-      logger.info(`Loaded ${localResources.length} local resources`)
+      const flat: BaseLinkResource[] = result.links.map((l) => ({
+        url: l.url,
+        title: l.title,
+        description: l.description,
+        type: l.type,
+      }))
 
-      logger.info('Loading coding repo resources...')
-      const codingResources = await getCodingRepoResources(handleErrorDefault)
-      logger.info(`Loaded ${codingResources.length} coding repo resources`)
+      logger.info(`Resolved ${flat.length} links (${result.skipped.length} skipped)`)
 
-      logger.info('Loading CNB repo resources...')
-      const cnbResources = await getCnbRepoResources(handleErrorDefault)
-      logger.info(`Loaded ${cnbResources.length} CNB repo resources`)
-
-      logger.info('Loading GitHub repo resources...')
-      const githubResources = await getGithubRepoResources(handleErrorDefault)
-      logger.info(`Loaded ${githubResources.length} GitHub repo resources`)
-
-      logger.info('Loading remote resources...')
-      const remoteResources = await getRemoteResources((error: unknown) => {
-        const errMsg = getErrorMessage(error)
-        const message = `Failed to get remote resources: ${errMsg}`
-        logger.error(message)
-        vscode.window.showWarningMessage(message)
-      })
-      logger.info(`Loaded ${remoteResources.length} remote resources`)
-
-      const result: BaseLinkResource[] = [
-        ...localResources,
-        ...codingResources,
-        ...cnbResources,
-        ...githubResources,
-        ...remoteResources,
-      ].filter(Boolean)
-
-      logger.info(`Total resources loaded: ${result.length}`)
-
-      if (result.length === 0) {
+      if (flat.length === 0) {
         this.clearCache()
         throw new Error('No links resources')
       }
 
-      // Update reactive state
-      this.resources.value = result
-      this.cachedResources = result
+      this.resources.value = flat
+      this.cachedResources = flat
       this.cachedPromise = null
 
-      logger.info('Successfully loaded all resources')
-      return result
+      return flat
     } catch (err) {
       const errorMessage = getErrorMessage(err)
       this.error.value = errorMessage
@@ -111,7 +97,6 @@ export class LinksStore {
       throw err
     } finally {
       this.isLoading.value = false
-      logger.info('Loading process finished, isLoading set to false')
     }
   }
 
@@ -168,17 +153,11 @@ setTimeout(() => {
     })
     .catch((err) => {
       logger.error('Failed to load initial link resources:', err)
-      // Ensure loading state is reset even on error
       linksStore.isLoading.value = false
     })
     .finally(() => {
-      // Ensure loading state is always reset
       linksStore.isLoading.value = false
-      logger.info('Auto-load process finished')
     })
 
-  // Auto-setup cache clearing listeners
-  logger.info('Setting up auto-clear cache listeners...')
   linksStore.setupAutoClearCache()
-  logger.info('Auto-clear cache listeners setup completed')
 }, 0)

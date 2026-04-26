@@ -3,19 +3,11 @@ import { defineConfigObject } from 'reactive-vscode'
 import type { NestedScopedConfigs } from '@/generated/meta'
 import { scopedConfigs } from '@/generated/meta'
 
-// 使用 vscode-ext-gen 生成的类型定义，忽略 remoteResources 类型并通过 & 声明
+// vscode-ext-gen does not infer the `links.remoteResources` type because the
+// schema uses `oneOf`; declare it inline so reactive-vscode types it correctly.
 export const config = defineConfigObject<NestedScopedConfigs & {
   remoteResources: { url: string, project?: string } | null
 }>(
   scopedConfigs.scope,
   scopedConfigs.defaults,
 )
-
-export function getExtensionLocalResources() {
-  const localResources = config.resources
-
-  return (localResources || []).map((resource) => ({
-    ...resource,
-    type: 'local' as const,
-  }))
-}

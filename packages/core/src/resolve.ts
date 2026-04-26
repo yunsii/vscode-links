@@ -19,9 +19,16 @@ import type { TemplateContext } from './template/providers/types'
 
 const SHARED_PROJECT = '#shared-links'
 
+/**
+ * User-authored link entry. The caller (VS Code settings or
+ * .vscode/settings.json) does not specify a `type`; resolve() tags
+ * these as 'local' itself.
+ */
+export type LocalLinkInput = Omit<BaseLinkResource, 'type'>
+
 export interface LinksConfig {
   /** Mirrors VS Code setting `links.resources`. */
-  resources?: BaseLinkResource[]
+  resources?: LocalLinkInput[]
   /** Mirrors VS Code setting `links.remoteResources`. */
   remoteResources?: { url: string, project?: string } | null
 }
