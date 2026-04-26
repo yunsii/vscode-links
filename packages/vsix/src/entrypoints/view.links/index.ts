@@ -1,13 +1,13 @@
-import { processLinkDisplay } from '@vscode-links/core'
 import { computed, createSingletonComposable, ref, useCommands, useTreeView, useVscodeContext } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
-import type { BaseLinkResource } from '@vscode-links/core'
+import type { BaseLinkResource } from '@vscode-links/native'
 import type { TreeViewNode } from 'reactive-vscode'
 
 import { categoryLabels, categoryMessages } from '../../constants'
 import { commands } from '../../generated/meta'
 import { openLinkResource } from '../../helpers/open'
+import { processLinkDisplay } from '../../helpers/url'
 import { linksStore } from '../../store/links'
 import { CategoryItem, EmptyItem, LinkItem } from './items'
 
