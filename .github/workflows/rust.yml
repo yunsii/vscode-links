@@ -8,6 +8,13 @@ on:
     branches:
       - main
 
+# Push to a branch supersedes any running CI for that branch.
+# Without this, every commit during PR review stacks more queued
+# macos jobs on top of the previous ones.
+concurrency:
+  group: rust-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: -D warnings
