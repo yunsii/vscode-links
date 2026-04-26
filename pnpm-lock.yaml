@@ -87,7 +87,23 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1
 
-  packages/core: {}
+  packages/core:
+    devDependencies:
+      '@types/papaparse':
+        specifier: ^5.3.16
+        version: 5.5.2
+      axios:
+        specifier: ^1.11.0
+        version: 1.15.2
+      papaparse:
+        specifier: ^5.5.3
+        version: 5.5.3
+      simple-git:
+        specifier: ^3.28.0
+        version: 3.36.0
+      type-fest:
+        specifier: ^4.41.0
+        version: 4.41.0
 
   packages/native: {}
 
@@ -99,33 +115,18 @@ importers:
       '@types/vscode':
         specifier: ^1.101.0
         version: 1.116.0
-      '@vscode-links/core':
-        specifier: workspace:*
-        version: link:../core
       '@vscode-links/native':
         specifier: workspace:*
         version: link:../native
       '@vscode/vsce':
         specifier: ^3.4.0
         version: 3.9.1
-      axios:
-        specifier: ^1.11.0
-        version: 1.15.2
       ovsx:
         specifier: ^0.10.5
         version: 0.10.11
-      papaparse:
-        specifier: ^5.5.3
-        version: 5.5.3
       reactive-vscode:
         specifier: ^0.3.2
         version: 0.3.3(@types/vscode@1.116.0)
-      simple-git:
-        specifier: ^3.28.0
-        version: 3.36.0
-      type-fest:
-        specifier: ^4.41.0
-        version: 4.41.0
       vscode-ext-gen:
         specifier: ^1.1.0
         version: 1.6.0

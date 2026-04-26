@@ -22,5 +22,12 @@
     "build:dts": "tsc --project tsconfig.build.json",
     "test": "vitest --run --passWithNoTests",
     "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.3.16",
+    "axios": "^1.11.0",
+    "papaparse": "^5.5.3",
+    "simple-git": "^3.28.0",
+    "type-fest": "^4.41.0"
   }
 }

@@ -5,6 +5,18 @@
 
 export type LinkResourceType = 'local' | 'detected' | 'remote-project' | 'remote-shared'
 
+/**
+ * The shape of a "raw" link resource — URL + title + a tag indicating
+ * how it was discovered. Mirrors `vscode_links_core::BaseLinkResource`.
+ */
+export interface BaseLinkResource {
+  url: string
+  title: string
+  description?: string
+  type: LinkResourceType
+  meta?: Record<string, unknown>
+}
+
 export interface ResolvedLink {
   type: LinkResourceType
   source: string

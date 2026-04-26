@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 
-import type { BaseLinkResource } from '@vscode-links/core'
+import type { BaseLinkResource } from '@vscode-links/native'
 
 import { logger } from '../utils'
 
