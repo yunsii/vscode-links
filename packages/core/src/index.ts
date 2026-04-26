@@ -30,6 +30,16 @@ export {
   parseGitHubRepoUrl,
 } from './providers/github'
 
+export { resolve } from './resolve'
+
+export type {
+  LinksConfig,
+  ResolveDiagnostic,
+  ResolvedLink,
+  ResolveOptions,
+  ResolveResult,
+  SkippedLink,
+} from './resolve'
 export type { BaseLinkResource, LinkResourceType, RemoteLinkResource } from './schemas'
 
 export {
@@ -41,9 +51,9 @@ export type {
   AllowedTemplateVariable,
   TemplateRenderErrorReason,
 } from './template/adapter'
-
 export { buildContext, registerProvider, renderResource } from './template/engine'
 export type { BuildContextEngineOptions, EngineLogger } from './template/engine'
+
 export type {
   BuildContextOptions,
   TemplateContext,
