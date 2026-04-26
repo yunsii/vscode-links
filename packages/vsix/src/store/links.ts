@@ -1,11 +1,10 @@
-import { resolve } from '@vscode-links/native'
 import { extensionContext, ref } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
-import type { BaseLinkResource } from '@vscode-links/native'
-
 import { config } from '@/helpers/config'
 import { getErrorMessage } from '@/helpers/errors'
+import { resolve } from '@/helpers/native-loader'
+import type { BaseLinkResource } from '@/helpers/native-loader'
 import { getCurrentFileRelativePath, getCurrentWorkspace } from '@/helpers/workspaces'
 import { logger } from '@/utils'
 

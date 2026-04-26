@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 
-import type { BaseLinkResource, LinkResourceType } from '@vscode-links/native'
+import type { BaseLinkResource, LinkResourceType } from '@/helpers/native-loader'
 
 import { commands } from '../../generated/meta'
 import { getIconForType } from '../../helpers/icons'

@@ -5,38 +5,159 @@ on:
     tags:
       - v*
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
-  publish-extension:
+  package:
+    name: package ${{ matrix.vscode-target }}
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - rust-target: x86_64-unknown-linux-gnu
+            vscode-target: linux-x64
+            triple: linux-x64-gnu
+            runs-on: ubuntu-latest
+            cross: false
+          - rust-target: aarch64-unknown-linux-gnu
+            vscode-target: linux-arm64
+            triple: linux-arm64-gnu
+            runs-on: ubuntu-latest
+            cross: true
+          - rust-target: x86_64-apple-darwin
+            vscode-target: darwin-x64
+            triple: darwin-x64
+            runs-on: macos-13
+            cross: false
+          - rust-target: aarch64-apple-darwin
+            vscode-target: darwin-arm64
+            triple: darwin-arm64
+            runs-on: macos-14
+            cross: false
+          - rust-target: x86_64-pc-windows-msvc
+            vscode-target: win32-x64
+            triple: win32-x64-msvc
+            runs-on: windows-latest
+            cross: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: vsix-${{ matrix.rust-target }}
+
+      - name: Install Zig (cross only)
+        if: matrix.cross
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Install cargo-zigbuild (cross only)
+        if: matrix.cross
+        run: cargo install --locked cargo-zigbuild
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - run: pnpm install
+
+      - name: Build VSIX bundle
+        run: pnpm --filter ./packages/vsix run build
+
+      - name: Stage native addon for this target
+        shell: bash
+        run: |
+          cd packages/vsix
+          if [ "${{ matrix.cross }}" = "true" ]; then
+            node scripts/build-native.mjs --target ${{ matrix.rust-target }} --zigbuild
+          else
+            node scripts/build-native.mjs --target ${{ matrix.rust-target }}
+          fi
+
+      - name: Package per-arch VSIX
+        shell: bash
+        working-directory: packages/vsix
+        run: |
+          mkdir -p ../../release
+          pnpm exec vsce package \
+            --no-dependencies \
+            --target ${{ matrix.vscode-target }} \
+            -o ../../release/links-${{ matrix.vscode-target }}.vsix
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vsix-${{ matrix.vscode-target }}
+          path: release/links-${{ matrix.vscode-target }}.vsix
+          if-no-files-found: error
+
+  publish:
+    name: publish to marketplace + ovsx
+    needs: package
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Set node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: pnpm
 
-      - run: npx changelogithub
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
       - run: pnpm install
 
-      - run: pnpm run typecheck:preview
+      - name: Download all per-arch VSIX artefacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+          pattern: vsix-*
+          merge-multiple: true
 
-      - name: Generate .vsix file
-        run: pnpm run package
+      - run: ls -la release
 
-      - name: Publish Extension
-        run: pnpm run publish -p $VSCE_PAT
+      - name: Generate release notes
+        run: npx changelogithub
         env:
-          VSCE_PAT: ${{secrets.VSCE_PAT}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to VS Code Marketplace
+        working-directory: packages/vsix
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          for vsix in ../../release/links-*.vsix; do
+            pnpm exec vsce publish --no-dependencies --packagePath "$vsix" -p "$VSCE_PAT"
+          done
+
+      - name: Publish to Open VSX
+        working-directory: packages/vsix
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          for vsix in ../../release/links-*.vsix; do
+            pnpm exec ovsx publish "$vsix" -p "$OVSX_PAT"
+          done
+
+      - name: Attach VSIX assets to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/links-*.vsix
+          fail_on_unmatched_files: true

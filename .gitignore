@@ -13,4 +13,6 @@ temp
 packages/*/src/generated
 target
 packages/native/*.node
+packages/vsix/dist
+
 
