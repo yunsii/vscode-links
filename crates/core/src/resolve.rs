@@ -40,6 +40,7 @@ pub struct LinksConfig {
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct EditorContext {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub file_relative_path: Option<String>,
