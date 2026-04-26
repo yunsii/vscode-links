@@ -1,4 +1,5 @@
-import { getErrorMessage, resolve } from '@vscode-links/core'
+import { getErrorMessage } from '@vscode-links/core'
+import { resolve } from '@vscode-links/native'
 import { extensionContext, ref } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
@@ -51,14 +52,16 @@ export class LinksStore {
       const cwd = await getCurrentWorkspace()
       const fileRelativePath = await getCurrentFileRelativePath()
 
-      const result = await resolve({
+      // Native addon is synchronous; vsix used to pass an EngineLogger
+      // here but the Rust core does not surface per-provider tracing,
+      // so we drop the field. Diagnostics still flow through `result`.
+      const result = resolve({
         cwd,
         config: {
           resources: config.resources,
           remoteResources: config.remoteResources,
         },
         editorContext: { fileRelativePath },
-        logger,
       })
 
       for (const diag of result.diagnostics) {

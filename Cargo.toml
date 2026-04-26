@@ -2,7 +2,8 @@
 resolver = "2"
 members = [
   "crates/core",
-  "crates/cli"
+  "crates/cli",
+  "crates/napi"
 ]
 
 [workspace.package]
@@ -21,3 +22,9 @@ ureq = { version = "3", default-features = false, features = [ "rustls" ] }
 anyhow = "1"
 clap = { version = "4", features = [ "derive" ] }
 json5 = "0.4"
+napi = { version = "3", default-features = false, features = [
+  "napi8",
+  "serde-json"
+] }
+napi-derive = "3"
+napi-build = "2"
