@@ -4,15 +4,11 @@
     "lib": ["esnext"],
     "module": "esnext",
     "moduleResolution": "Bundler",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "resolveJsonModule": true,
     "strict": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
-  },
-  "exclude": ["dist"]
+  }
 }

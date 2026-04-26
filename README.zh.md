@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img alt="Logo" src="res/icon.png" width="280">
+<img alt="Logo" src="packages/vsix/res/icon.png" width="280">
 
 # VS Code Links
 

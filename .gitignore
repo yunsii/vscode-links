@@ -10,4 +10,4 @@ lib-cov
 logs
 node_modules
 temp
-src/generated
+packages/*/src/generated
