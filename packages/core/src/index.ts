@@ -32,7 +32,15 @@ export {
 
 export type { BaseLinkResource, LinkResourceType, RemoteLinkResource } from './schemas'
 
-export { renderTemplate } from './template/adapter'
+export {
+  ALLOWED_TEMPLATE_VARIABLES,
+  renderTemplate,
+  TemplateRenderError,
+} from './template/adapter'
+export type {
+  AllowedTemplateVariable,
+  TemplateRenderErrorReason,
+} from './template/adapter'
 
 export { buildContext, registerProvider, renderResource } from './template/engine'
 export type { BuildContextEngineOptions, EngineLogger } from './template/engine'
