@@ -29,7 +29,7 @@ describe('resolve', () => {
 
   it('renders a static local link from config.resources', async () => {
     const config: LinksConfig = {
-      resources: [{ url: 'https://example.com/wiki', title: 'Team wiki', type: 'local' }],
+      resources: [{ url: 'https://example.com/wiki', title: 'Team wiki' }],
     }
     const out = await resolve({ cwd: isoCwd, config })
     expect(out.links).toHaveLength(1)
@@ -43,7 +43,7 @@ describe('resolve', () => {
 
   it('skips a config row whose template uses an unknown variable', async () => {
     const config: LinksConfig = {
-      resources: [{ url: 'https://example.com/{{custom.var}}', title: 'Bad', type: 'local' }],
+      resources: [{ url: 'https://example.com/{{custom.var}}', title: 'Bad' }],
     }
     const out = await resolve({ cwd: isoCwd, config })
     expect(out.links).toEqual([])
@@ -57,7 +57,6 @@ describe('resolve', () => {
       resources: [{
         url: 'https://example.com/blob/{{git.branch}}/{{workspace.fileRelativePath}}',
         title: 'File',
-        type: 'local',
       }],
     }
     const out = await resolve({ cwd: isoCwd, config })

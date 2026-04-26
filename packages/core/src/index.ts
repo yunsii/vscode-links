@@ -34,6 +34,7 @@ export { resolve } from './resolve'
 
 export type {
   LinksConfig,
+  LocalLinkInput,
   ResolveDiagnostic,
   ResolvedLink,
   ResolveOptions,
