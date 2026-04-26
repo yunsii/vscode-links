@@ -1,0 +1,24 @@
+{
+  "name": "@vscode-links/core",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Provider parsing, template rendering, and CSV resolution shared by the vscode-links VSIX and the standalone CLI.",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "scripts": {
+    "build": "tsdown src/index.ts",
+    "test": "vitest --run --passWithNoTests",
+    "typecheck": "tsc --noEmit"
+  }
+}

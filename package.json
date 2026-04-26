@@ -1,7 +1,5 @@
 {
-  "publisher": "yuns",
-  "name": "links",
-  "displayName": "Links",
+  "name": "vscode-links-monorepo",
   "version": "1.1.0",
   "private": true,
   "packageManager": "pnpm@10.11.0",
@@ -20,214 +18,17 @@
   "sponsor": {
     "url": "https://opencollective.com/yunsii"
   },
-  "categories": [
-    "Other"
-  ],
-  "main": "./dist/index.js",
-  "icon": "res/icon.png",
-  "files": [
-    "LICENSE.md",
-    "dist/*",
-    "res/*"
-  ],
-  "engines": {
-    "vscode": "^1.101.0"
-  },
-  "activationEvents": [
-    "onStartupFinished"
-  ],
-  "contributes": {
-    "configuration": {
-      "title": "Links",
-      "properties": {
-        "links.resources": {
-          "description": "Local resources to open",
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "type": "object",
-            "required": [
-              "url",
-              "title"
-            ],
-            "properties": {
-              "url": {
-                "type": "string",
-                "description": "Specific URL"
-              },
-              "title": {
-                "type": "string",
-                "description": "Title of specific URL"
-              },
-              "description": {
-                "type": "string",
-                "description": "Description of specific URL"
-              }
-            }
-          }
-        },
-        "links.remoteResources": {
-          "oneOf": [
-            {
-              "type": "null",
-              "default": null,
-              "description": "Not configured (default)"
-            },
-            {
-              "type": "object",
-              "required": [
-                "url"
-              ],
-              "properties": {
-                "url": {
-                  "type": "string",
-                  "description": "Remote CSV file URL"
-                },
-                "project": {
-                  "type": "string",
-                  "description": "Project name, used to filter resources"
-                }
-              }
-            }
-          ],
-          "description": "Remote resources to open: set to an object with `url` and `project`. Leave unset (null) to disable."
-        },
-        "links.customIcons": {
-          "type": "object",
-          "description": "Custom icons for different link types",
-          "properties": {
-            "local": {
-              "type": "string",
-              "default": "folder",
-              "description": "Icon for local links"
-            },
-            "detected": {
-              "type": "string",
-              "default": "eye",
-              "description": "Icon for auto-detected links"
-            },
-            "remote-project": {
-              "type": "string",
-              "default": "repo",
-              "description": "Icon for remote project links"
-            },
-            "remote-shared": {
-              "type": "string",
-              "default": "share",
-              "description": "Icon for shared remote links"
-            }
-          }
-        }
-      }
-    },
-    "commands": [
-      {
-        "command": "links.openPicker",
-        "title": "Links: Open Picker"
-      },
-      {
-        "command": "links.refresh",
-        "title": "Links: Refresh",
-        "icon": "$(refresh)"
-      },
-      {
-        "command": "links.enterSearch",
-        "title": "Links: Enter Search Mode",
-        "icon": "$(search)"
-      },
-      {
-        "command": "links.exitSearch",
-        "title": "Links: Exit Search Mode",
-        "icon": "$(close)"
-      },
-      {
-        "command": "links.openUrl",
-        "title": "Links: Open Link"
-      },
-      {
-        "command": "links.copyUrl",
-        "title": "Links: Copy Link URL"
-      }
-    ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "linksView",
-          "title": "Links",
-          "icon": "res/icon-activitybar.svg"
-        }
-      ]
-    },
-    "views": {
-      "explorer": [
-        {
-          "id": "linksTree",
-          "name": "Links",
-          "contextualTitle": "Links",
-          "icon": "res/icon.svg"
-        }
-      ]
-    },
-    "menus": {
-      "commandPalette": [
-        {
-          "command": "links.enterSearch",
-          "when": "false"
-        },
-        {
-          "command": "links.exitSearch",
-          "when": "false"
-        },
-        {
-          "command": "links.openUrl",
-          "when": "false"
-        },
-        {
-          "command": "links.copyUrl",
-          "when": "false"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "links.refresh",
-          "when": "view == linksTree",
-          "group": "navigation"
-        },
-        {
-          "command": "links.enterSearch",
-          "when": "view == linksTree && !links.isSearchMode",
-          "group": "navigation"
-        },
-        {
-          "command": "links.exitSearch",
-          "when": "view == linksTree && links.isSearchMode",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "links.copyUrl",
-          "when": "view == linksTree && viewItem == linkItem",
-          "group": "7_modification@2"
-        }
-      ]
-    }
-  },
   "scripts": {
-    "build": "tsdown src/index.ts --external vscode",
-    "dev": "nr build --watch --sourcemap",
+    "build": "pnpm -r run build",
+    "dev": "pnpm --filter ./packages/vsix run dev",
     "lint": "eslint .",
-    "vscode:prepublish": "nr build",
-    "package": "vsce package --no-dependencies",
-    "publish": "vsce publish --no-dependencies",
-    "test": "vitest --run",
-    "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
-    "typecheck:preview": "tsgo --noEmit",
-    "release": "bumpp",
-    "prepare": "husky & nr update",
-    "update": "vscode-ext-gen --output src/generated/meta.ts",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "test": "pnpm -r run test",
+    "test:watch": "pnpm --filter ./packages/vsix run test:watch",
+    "typecheck": "pnpm -r run typecheck",
+    "typecheck:preview": "pnpm -r run typecheck:preview",
+    "release": "bumpp -r",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.16.0",
@@ -238,32 +39,21 @@
     "@jannajs/lint": "^3.1.1",
     "@prettier/plugin-xml": "^3.4.1",
     "@types/node": "^22.15.18",
-    "@types/papaparse": "^5.3.16",
-    "@types/vscode": "^1.101.0",
     "@typescript/native-preview": "7.0.0-dev.20250910.1",
-    "@vscode/vsce": "^3.4.0",
-    "axios": "^1.11.0",
     "bumpp": "^10.1.1",
-    "es-toolkit": "^1.39.10",
     "eslint": "9.27.0",
     "eslint-plugin-format": "^0.1.2",
     "eslint-plugin-react-hooks": "5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
-    "ovsx": "^0.10.5",
-    "papaparse": "^5.5.3",
     "pnpm": "^10.11.0",
-    "reactive-vscode": "^0.3.2",
     "rimraf": "^6.0.1",
-    "simple-git": "^3.28.0",
     "tsdown": "^0.14.2",
     "tsx": "^4.19.4",
-    "type-fest": "^4.41.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vitest": "^3.1.3",
-    "vscode-ext-gen": "^1.1.0"
+    "vitest": "^3.1.3"
   },
   "lint-staged": {
     "*": "eslint --fix"
