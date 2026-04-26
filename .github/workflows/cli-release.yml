@@ -77,8 +77,12 @@ jobs:
           fi
 
       # Strip Linux/macOS binaries; Windows leaves PE symbols alone.
+      # Cross legs are skipped because the host's `strip` (x86_64
+      # binutils) does not recognise foreign ELF formats; we accept
+      # the slightly larger arm64 binary rather than pull in a
+      # cross-strip toolchain.
       - name: Strip binary
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && matrix.cross != true
         shell: bash
         run: |
           case "${{ matrix.target }}" in
