@@ -1,0 +1,172 @@
+name: CLI Release
+
+on:
+  push:
+    tags:
+      - cli-v*
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            triple: linux-x64-gnu
+            runs-on: ubuntu-latest
+            cross: false
+            ext: ''
+            archive: tar.gz
+          - target: aarch64-unknown-linux-gnu
+            triple: linux-arm64-gnu
+            runs-on: ubuntu-latest
+            cross: true
+            ext: ''
+            archive: tar.gz
+          - target: x86_64-apple-darwin
+            triple: darwin-x64
+            runs-on: macos-13
+            cross: false
+            ext: ''
+            archive: tar.gz
+          - target: aarch64-apple-darwin
+            triple: darwin-arm64
+            runs-on: macos-14
+            cross: false
+            ext: ''
+            archive: tar.gz
+          - target: x86_64-pc-windows-msvc
+            triple: win32-x64-msvc
+            runs-on: windows-latest
+            cross: false
+            ext: .exe
+            archive: zip
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}-cli
+
+      - name: Install Zig (cross only)
+        if: matrix.cross
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Install cargo-zigbuild (cross only)
+        if: matrix.cross
+        run: cargo install --locked cargo-zigbuild
+
+      - name: Build CLI bin
+        shell: bash
+        run: |
+          if [ "${{ matrix.cross }}" = "true" ]; then
+            cargo zigbuild --release -p vscode-links-cli --target ${{ matrix.target }}
+          else
+            cargo build --release -p vscode-links-cli --target ${{ matrix.target }}
+          fi
+
+      # Strip Linux/macOS binaries; Windows leaves PE symbols alone.
+      - name: Strip binary
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          case "${{ matrix.target }}" in
+            *apple*) strip target/${{ matrix.target }}/release/vscode-links ;;
+            *)       strip --strip-unneeded target/${{ matrix.target }}/release/vscode-links ;;
+          esac
+
+      - name: Stage release archive
+        id: stage
+        shell: bash
+        run: |
+          stage="vscode-links-${{ matrix.triple }}"
+          mkdir -p "stage/$stage"
+          cp "target/${{ matrix.target }}/release/vscode-links${{ matrix.ext }}" "stage/$stage/"
+          cp LICENSE.md README.md "stage/$stage/" || true
+          cd stage
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            7z a -tzip "${stage}.zip" "$stage" >/dev/null
+            echo "asset=stage/${stage}.zip" >> "$GITHUB_OUTPUT"
+            echo "name=${stage}.zip" >> "$GITHUB_OUTPUT"
+          else
+            tar czf "${stage}.tar.gz" "$stage"
+            echo "asset=stage/${stage}.tar.gz" >> "$GITHUB_OUTPUT"
+            echo "name=${stage}.tar.gz" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compute SHA256
+        shell: bash
+        run: |
+          asset="${{ steps.stage.outputs.asset }}"
+          if command -v sha256sum >/dev/null; then
+            (cd "$(dirname "$asset")" && sha256sum "$(basename "$asset")") > "${asset}.sha256"
+          else
+            (cd "$(dirname "$asset")" && shasum -a 256 "$(basename "$asset")") > "${asset}.sha256"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cli-${{ matrix.triple }}
+          path: |
+            ${{ steps.stage.outputs.asset }}
+            ${{ steps.stage.outputs.asset }}.sha256
+          if-no-files-found: error
+
+  release:
+    name: publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version from tag
+        id: version
+        run: |
+          ref="${GITHUB_REF#refs/tags/cli-v}"
+          echo "value=${ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Download all CLI artefacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artefacts
+          pattern: cli-*
+
+      - name: Render install.sh with this release URL
+        run: |
+          mkdir -p out
+          base="https://github.com/${GITHUB_REPOSITORY}/releases/download/cli-v${{ steps.version.outputs.value }}"
+          sed "s|@@RELEASE_BASE_URL@@|${base}|g; s|@@RELEASE_VERSION@@|${{ steps.version.outputs.value }}|g" \
+            tools/cli-installer/install.sh.in > out/install.sh
+          chmod +x out/install.sh
+
+      - name: Stage release assets
+        run: |
+          mkdir -p release
+          # flatten artefacts/cli-<triple>/* into release/
+          find artefacts -mindepth 2 -maxdepth 2 -type f -exec cp {} release/ \;
+          cp out/install.sh release/
+          ls -la release
+
+      - name: Create / update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: cli-v${{ steps.version.outputs.value }}
+          name: vscode-links-cli v${{ steps.version.outputs.value }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: release/*

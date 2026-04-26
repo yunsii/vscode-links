@@ -1,0 +1,193 @@
+#!/usr/bin/env sh
+# vscode-links-cli installer.
+#
+# Detects the host triple, downloads the matching tarball/zip from the
+# GitHub Release that built this script, verifies the SHA256, and
+# installs the `vscode-links` binary into the chosen prefix.
+#
+# Templated at release time; @@RELEASE_BASE_URL@@ and
+# @@RELEASE_VERSION@@ are substituted by .github/workflows/cli-release.yml.
+#
+# Usage:
+#   curl -fsSL https://github.com/yunsii/vscode-links/releases/latest/download/install.sh | sh
+#   curl -fsSL .../install.sh | INSTALL_PREFIX=/usr/local/bin sh
+#   curl -fsSL .../install.sh | INSTALL_PREFIX=/tmp/x sh -s -- --no-verify
+#
+# Environment:
+#   INSTALL_PREFIX  Target directory. Default: $XDG_BIN_HOME, else
+#                   $HOME/.local/bin if writable, else /usr/local/bin.
+#
+# Flags:
+#   --no-verify     Skip the SHA256 check (not recommended).
+#   --print-only    Print the resolved download URL and exit.
+
+set -eu
+
+RELEASE_BASE_URL="@@RELEASE_BASE_URL@@"
+RELEASE_VERSION="@@RELEASE_VERSION@@"
+
+main() {
+  triple=$(detect_triple)
+  archive_ext=$(archive_ext_for "$triple")
+  asset="vscode-links-${triple}.${archive_ext}"
+  url="${RELEASE_BASE_URL}/${asset}"
+  shasum_url="${url}.sha256"
+
+  no_verify=0
+  print_only=0
+  for arg in "$@"; do
+    case "$arg" in
+      --no-verify)  no_verify=1 ;;
+      --print-only) print_only=1 ;;
+      *) die "unknown option: $arg" ;;
+    esac
+  done
+
+  if [ "$print_only" -eq 1 ]; then
+    echo "$url"
+    exit 0
+  fi
+
+  prefix=$(resolve_prefix)
+  ensure_dir "$prefix"
+
+  tmp=$(mktemp -d "${TMPDIR:-/tmp}/vscode-links-install.XXXXXX")
+  trap 'rm -rf "$tmp"' EXIT
+  log "Downloading $asset"
+  fetch "$url" "$tmp/$asset"
+
+  if [ "$no_verify" -eq 0 ]; then
+    log "Verifying SHA256"
+    fetch "$shasum_url" "$tmp/$asset.sha256"
+    verify_sha256 "$tmp/$asset" "$tmp/$asset.sha256"
+  fi
+
+  log "Extracting"
+  case "$archive_ext" in
+    tar.gz) tar -xzf "$tmp/$asset" -C "$tmp" ;;
+    zip)
+      if command -v unzip >/dev/null 2>&1; then
+        unzip -q -o "$tmp/$asset" -d "$tmp"
+      else
+        die "unzip is required for windows installs"
+      fi
+      ;;
+    *) die "unknown archive ext: $archive_ext" ;;
+  esac
+
+  staged_dir="$tmp/vscode-links-${triple}"
+  bin="vscode-links"
+  case "$triple" in *win32*) bin="vscode-links.exe" ;; esac
+
+  if [ ! -f "$staged_dir/$bin" ]; then
+    die "expected $staged_dir/$bin in archive but it is missing"
+  fi
+
+  install_bin "$staged_dir/$bin" "$prefix/$bin"
+  log "Installed $bin to $prefix"
+
+  case ":$PATH:" in
+    *":$prefix:"*) ;;
+    *) log "warning: $prefix is not on PATH; add it to your shell rc" ;;
+  esac
+
+  "$prefix/$bin" --version 2>/dev/null || true
+}
+
+detect_triple() {
+  os=$(uname -s 2>/dev/null || echo unknown)
+  arch=$(uname -m 2>/dev/null || echo unknown)
+  case "$os" in
+    Linux)
+      case "$arch" in
+        x86_64|amd64) echo "linux-x64-gnu" ;;
+        aarch64|arm64) echo "linux-arm64-gnu" ;;
+        *) die "unsupported linux arch: $arch" ;;
+      esac
+      ;;
+    Darwin)
+      case "$arch" in
+        x86_64) echo "darwin-x64" ;;
+        arm64)  echo "darwin-arm64" ;;
+        *) die "unsupported darwin arch: $arch" ;;
+      esac
+      ;;
+    MINGW*|MSYS*|CYGWIN*)
+      echo "win32-x64-msvc"
+      ;;
+    *) die "unsupported OS: $os" ;;
+  esac
+}
+
+archive_ext_for() {
+  case "$1" in
+    *win32*) echo "zip" ;;
+    *) echo "tar.gz" ;;
+  esac
+}
+
+resolve_prefix() {
+  if [ -n "${INSTALL_PREFIX:-}" ]; then
+    echo "$INSTALL_PREFIX"
+    return
+  fi
+  if [ -n "${XDG_BIN_HOME:-}" ]; then
+    echo "$XDG_BIN_HOME"
+    return
+  fi
+  if [ -n "${HOME:-}" ]; then
+    echo "$HOME/.local/bin"
+    return
+  fi
+  echo "/usr/local/bin"
+}
+
+ensure_dir() {
+  if [ ! -d "$1" ]; then
+    mkdir -p "$1" 2>/dev/null || die "cannot create $1; pass INSTALL_PREFIX=<writable dir>"
+  fi
+  if [ ! -w "$1" ]; then
+    die "$1 is not writable; pass INSTALL_PREFIX=<writable dir> or run with sudo"
+  fi
+}
+
+fetch() {
+  url="$1"
+  out="$2"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$url" -o "$out"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -q "$url" -O "$out"
+  else
+    die "neither curl nor wget is available"
+  fi
+}
+
+verify_sha256() {
+  file="$1"
+  expected_file="$2"
+  expected=$(awk '{print $1}' "$expected_file")
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual=$(sha256sum "$file" | awk '{print $1}')
+  elif command -v shasum >/dev/null 2>&1; then
+    actual=$(shasum -a 256 "$file" | awk '{print $1}')
+  else
+    die "no sha256 tool found; rerun with --no-verify if you accept the risk"
+  fi
+  if [ "$expected" != "$actual" ]; then
+    die "sha256 mismatch: expected $expected, got $actual"
+  fi
+}
+
+install_bin() {
+  src="$1"
+  dst="$2"
+  cp "$src" "$dst.tmp"
+  chmod +x "$dst.tmp"
+  mv "$dst.tmp" "$dst"
+}
+
+log() { printf '> %s\n' "$*" >&2; }
+die() { printf 'install.sh: %s\n' "$*" >&2; exit 1; }
+
+main "$@"
