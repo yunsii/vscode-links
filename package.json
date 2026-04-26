@@ -27,7 +27,9 @@
     "test:watch": "pnpm --filter ./packages/vsix run test:watch",
     "typecheck": "pnpm -r run typecheck",
     "typecheck:preview": "pnpm -r run typecheck:preview",
-    "release": "bumpp -r",
+    "release:cli": "node scripts/bump.mjs --train cli --to",
+    "release:native": "node scripts/bump.mjs --train native --to",
+    "release:vsix": "node scripts/bump.mjs --train vsix --to",
     "prepare": "husky"
   },
   "devDependencies": {
