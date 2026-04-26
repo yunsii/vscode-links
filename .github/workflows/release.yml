@@ -133,11 +133,6 @@ jobs:
 
       - run: ls -la release
 
-      - name: Generate release notes
-        run: npx changelogithub
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Publish to VS Code Marketplace
         working-directory: packages/vsix
         env:
@@ -156,8 +151,9 @@ jobs:
             pnpm exec ovsx publish "$vsix" -p "$OVSX_PAT"
           done
 
-      - name: Attach VSIX assets to GitHub Release
+      - name: Create GitHub Release with VSIX assets
         uses: softprops/action-gh-release@v2
         with:
           files: release/links-*.vsix
           fail_on_unmatched_files: true
+          generate_release_notes: true
