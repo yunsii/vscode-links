@@ -7,10 +7,20 @@
 //! whitelist template engine. Git, CSV, JSONC config, and the
 //! `resolve()` orchestrator land in subsequent commits.
 
+pub mod csv;
+pub mod git;
 pub mod providers;
+pub mod resolve;
 pub mod schemas;
 pub mod template;
 
+pub use csv::{CsvFetcher, FetchError, HttpCsvFetcher};
+pub use git::{get_current_branch, get_current_repo_url, GitError};
+pub use resolve::{
+    DiagnosticLevel, EditorContext, LinksConfig, LocalLinkInput, RemoteResources,
+    ResolveDiagnostic, ResolveError, ResolveOptions, ResolveResult, ResolvedLink, SkipReason,
+    SkippedLink, resolve,
+};
 pub use schemas::{BaseLinkResource, LinkResourceType, RemoteLinkResource};
 pub use template::{
     AllowedTemplateVariable, TemplateRenderError, TemplateRenderErrorReason,
