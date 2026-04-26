@@ -104,7 +104,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    name: publish to marketplace + ovsx
+    name: publish to marketplace
     needs: package
     runs-on: ubuntu-latest
     permissions:
@@ -140,15 +140,6 @@ jobs:
         run: |
           for vsix in ../../release/links-*.vsix; do
             pnpm exec vsce publish --no-dependencies --packagePath "$vsix" -p "$VSCE_PAT"
-          done
-
-      - name: Publish to Open VSX
-        working-directory: packages/vsix
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
-        run: |
-          for vsix in ../../release/links-*.vsix; do
-            pnpm exec ovsx publish "$vsix" -p "$OVSX_PAT"
           done
 
       - name: Create GitHub Release with VSIX assets

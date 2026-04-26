@@ -195,8 +195,7 @@ The published package uses `optionalDependencies` to install only the `.node` fo
               │                      │                      │
               ▼                      ▼                      ▼
         shell users /          Node tools              VS Code users
-        wezterm pickers        (in-process)            (marketplace +
-                                                       open-vsx)
+        wezterm pickers        (in-process)            (marketplace)
 ```
 
 The strict-whitelist template engine accepts only the documented variables (`{{repo.url}}`, `{{git.branch}}`, `{{workspace.fileRelativePath}}`, `{{repoSpecific.<provider>.<...>}}`); any other expression throws a typed error so the contract is identical across the three runtimes.

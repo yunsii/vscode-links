@@ -18,7 +18,6 @@ done through `scripts/bump.mjs` (wrapped as `pnpm release:<train>
      first `native-v*` publish; gets removed after step 6 below.
    - `VSCE_PAT` — Azure DevOps PAT with marketplace `Manage` scope.
      Permanent.
-   - `OVSX_PAT` — Open VSX user token. Permanent.
 
 2. **npm scope ownership**: confirm `@vscode-links` is registered to
    you (or to an org you own). `npm org ls @vscode-links` should list
@@ -26,9 +25,6 @@ done through `scripts/bump.mjs` (wrapped as `pnpm release:<train>
 
 3. **Marketplace publisher**: confirm the `yuns` publisher exists and
    is verified at <https://marketplace.visualstudio.com/manage>.
-
-4. **Open VSX namespace**: confirm `yuns` is registered at
-   <https://open-vsx.org/user-settings/namespaces>.
 
 ## Cutting a release
 
@@ -104,8 +100,8 @@ publish, switch each package to OIDC and remove the token.
 `cli-release.yml` uses `softprops/action-gh-release@v2` with the
 default `GITHUB_TOKEN` — no separate token, no transition needed.
 
-`release.yml` (VSIX) needs `VSCE_PAT` + `OVSX_PAT` permanently;
-neither marketplace currently supports OIDC.
+`release.yml` (VSIX) needs `VSCE_PAT` permanently; the marketplace
+does not currently support OIDC.
 
 ## Cancelling a stuck release
 
