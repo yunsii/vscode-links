@@ -5,7 +5,7 @@ import type { TemplateProvider } from './types'
 export const gitProvider: TemplateProvider = {
   id: 'git',
   getContext: async (options) => {
-    const branch = options.workspacePath ? await getCurrentBranch(options.workspacePath) : null
+    const branch = options.workspacePath ? await tryGetBranch(options.workspacePath) : null
 
     return {
       repo: {
@@ -19,4 +19,12 @@ export const gitProvider: TemplateProvider = {
       },
     }
   },
+}
+
+async function tryGetBranch(cwd: string): Promise<string | null> {
+  try {
+    return (await getCurrentBranch(cwd)) ?? null
+  } catch {
+    return null
+  }
 }
