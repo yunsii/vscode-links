@@ -26,7 +26,7 @@ jobs:
             cross: true
           - target: x86_64-apple-darwin
             triple: darwin-x64
-            runs-on: macos-13
+            runs-on: macos-14
             cross: false
           - target: aarch64-apple-darwin
             triple: darwin-arm64
