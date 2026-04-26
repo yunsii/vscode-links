@@ -1,8 +1,9 @@
 import { computed, createSingletonComposable, ref, useCommands, useTreeView, useVscodeContext } from 'reactive-vscode'
 import * as vscode from 'vscode'
 
-import type { BaseLinkResource } from '@vscode-links/native'
 import type { TreeViewNode } from 'reactive-vscode'
+
+import type { BaseLinkResource } from '@/helpers/native-loader'
 
 import { categoryLabels, categoryMessages } from '../../constants'
 import { commands } from '../../generated/meta'

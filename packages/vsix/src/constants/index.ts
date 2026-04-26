@@ -1,4 +1,4 @@
-import type { LinkResourceType } from '@vscode-links/native'
+import type { LinkResourceType } from '@/helpers/native-loader'
 
 export const categoryLabels: Record<LinkResourceType, string> = {
   'local': 'Local Links',

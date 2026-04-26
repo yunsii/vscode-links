@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 
-import type { LinkResourceType } from '@vscode-links/native'
+import type { LinkResourceType } from '@/helpers/native-loader'
 
 const iconCache = new Map<LinkResourceType, vscode.ThemeIcon>()
 

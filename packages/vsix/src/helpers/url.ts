@@ -1,7 +1,7 @@
 // Display formatter for picker / tree-view rows. Inlined from
 // packages/core/src/url.ts because it's only used by the VSIX.
 
-import type { BaseLinkResource } from '@vscode-links/native'
+import type { BaseLinkResource } from '@/helpers/native-loader'
 
 export interface ProcessedLinkDisplay {
   label: string
