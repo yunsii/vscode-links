@@ -17,6 +17,9 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 regex = { workspace = true }
 thiserror = { workspace = true }
+csv = { workspace = true }
+ureq = { workspace = true }
+anyhow = { workspace = true }
 
 [lib]
 name = "vscode_links_core"
