@@ -1,13 +1,14 @@
+import { getErrorMessage } from '@vscode-links/core'
 import { extensionContext, ref } from 'reactive-vscode'
 import * as vscode from 'vscode'
+
+import type { BaseLinkResource } from '@vscode-links/core'
 
 import { getCnbRepoResources } from '@/entrypoints/command.open/cnb'
 import { getCodingRepoResources } from '@/entrypoints/command.open/coding'
 import { getGithubRepoResources } from '@/entrypoints/command.open/github'
 import { getRemoteResources } from '@/entrypoints/command.open/remote'
 import { getExtensionLocalResources } from '@/helpers/config'
-import { getErrorMessage } from '@/helpers/errors'
-import type { BaseLinkResource } from '@/helpers/schemas'
 import { logger } from '@/utils'
 
 // Reactive state management for link resources

@@ -1,10 +1,10 @@
+import { processLinkDisplay } from '@vscode-links/core'
 import * as vscode from 'vscode'
+
+import type { BaseLinkResource, LinkResourceType } from '@vscode-links/core'
 
 import { commands } from '../../generated/meta'
 import { getIconForType } from '../../helpers/icons'
-import { processLinkDisplay } from '../../helpers/url'
-
-import type { BaseLinkResource, LinkResourceType } from '../../helpers/schemas'
 
 export class LinkItem extends vscode.TreeItem {
   constructor(public readonly resource: BaseLinkResource) {

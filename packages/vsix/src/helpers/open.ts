@@ -1,10 +1,10 @@
+import { buildContext, getCurrentRepoUrl, renderResource } from '@vscode-links/core'
 import * as vscode from 'vscode'
 
-import { buildContext, renderResource } from '../template/engine'
-import { logger } from '../utils'
-import { getCurrentRepoUrl } from './git'
+import type { BaseLinkResource } from '@vscode-links/core'
 
-import type { BaseLinkResource } from './schemas'
+import { logger } from '../utils'
+import { getCurrentFileRelativePath } from './workspaces'
 
 /**
  * Unified function to open a link resource with real-time template rendering
@@ -15,7 +15,13 @@ export async function openLinkResource(resource: BaseLinkResource): Promise<void
     // Build context and render the resource just before opening
     const workspace = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
     const repoUrl = workspace ? await getCurrentRepoUrl(workspace) : null
-    const context = await buildContext({ workspacePath: workspace, repoUrl })
+    const fileRelativePath = await getCurrentFileRelativePath()
+    const context = await buildContext({
+      workspacePath: workspace,
+      repoUrl,
+      fileRelativePath,
+      logger,
+    })
     const rendered = renderResource(resource, context)
     let processedUrl = rendered.url
     if (!processedUrl.match(/^https?:\/\//)) {

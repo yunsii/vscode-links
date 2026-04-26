@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseGitHubRepoUrl } from './helpers'
+import { parseGitHubRepoUrl } from './github'
 
 describe('parseGitHubRepoUrl', () => {
   [

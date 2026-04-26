@@ -1,8 +1,7 @@
-import { getCurrentRepoUrl } from '@/helpers/git'
+import { ensureCodingRepoUrl, getCodingRepoLinks, getCurrentRepoUrl, parseCodingRepoUrl } from '@vscode-links/core'
+
 import { getCurrentWorkspace } from '@/helpers/workspaces'
 import { logger } from '@/utils'
-
-import { ensureCodingRepoUrl, getCodingRepoLinks, parseCodingRepoUrl } from './helpers'
 
 export async function getCodingRepoResources(onError: (err: unknown) => void) {
   try {

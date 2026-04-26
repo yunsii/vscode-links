@@ -1,4 +1,4 @@
-import type { BaseLinkResource } from '@/helpers/schemas'
+import type { BaseLinkResource } from '../schemas'
 
 export function ensureCnbRepoUrl(repoUrl?: string | null): repoUrl is string {
   if (!repoUrl) {

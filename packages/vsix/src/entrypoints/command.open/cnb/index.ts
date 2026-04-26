@@ -1,8 +1,7 @@
-import { getCurrentRepoUrl } from '@/helpers/git'
+import { ensureCnbRepoUrl, getCnbRepoLinks, getCurrentRepoUrl, parseCnbRepoUrl } from '@vscode-links/core'
+
 import { getCurrentWorkspace } from '@/helpers/workspaces'
 import { logger } from '@/utils'
-
-import { ensureCnbRepoUrl, getCnbRepoLinks, parseCnbRepoUrl } from './helpers'
 
 export async function getCnbRepoResources(onError: (err: unknown) => void) {
   try {

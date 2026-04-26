@@ -1,16 +1,16 @@
 import type { JsonObject } from 'type-fest'
 
-import { ensureGitHubRepoUrl, parseGitHubRepoUrl } from '@/entrypoints/command.open/github/helpers'
+import { ensureCodingRepoUrl, parseCodingRepoUrl } from '../../providers/coding'
 
 import type { TemplateProvider } from './types'
 
-export const githubProvider: TemplateProvider = {
-  id: 'github',
+export const codingProvider: TemplateProvider = {
+  id: 'coding',
   match: (repoUrl) => {
     if (!repoUrl) {
       return false
     }
-    return ensureGitHubRepoUrl(repoUrl)
+    return ensureCodingRepoUrl(repoUrl)
   },
   getContext: async (options) => {
     const { repoUrl } = options
@@ -20,17 +20,18 @@ export const githubProvider: TemplateProvider = {
     }
 
     try {
-      const { repo, owner } = parseGitHubRepoUrl(repoUrl)
+      const { repo, project, team } = parseCodingRepoUrl(repoUrl)
       return {
         repoSpecific: {
-          github: {
-            owner,
+          coding: {
+            team,
+            project,
             repo,
           },
         },
-      }
+      } as JsonObject
     } catch (err) {
-      return {}
+      return {} as JsonObject
     }
   },
 }

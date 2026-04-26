@@ -17,7 +17,9 @@
     "dist/*"
   ],
   "scripts": {
-    "build": "tsdown src/index.ts",
+    "build": "pnpm run build:js && pnpm run build:dts",
+    "build:js": "tsdown src/index.ts",
+    "build:dts": "tsc --project tsconfig.build.json",
     "test": "vitest --run --passWithNoTests",
     "typecheck": "tsc --noEmit"
   }
