@@ -232,7 +232,6 @@
     "@vscode-links/core": "workspace:*",
     "@vscode/vsce": "^3.4.0",
     "axios": "^1.11.0",
-    "es-toolkit": "^1.39.10",
     "ovsx": "^0.10.5",
     "papaparse": "^5.5.3",
     "reactive-vscode": "^0.3.2",
