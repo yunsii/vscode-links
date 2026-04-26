@@ -30,6 +30,7 @@ pub struct RunResult {
     bin_name = "vscode-links",
     about = "Resolve project links from a workspace + .vscode/settings.json",
     long_about = None,
+    version,
     disable_help_subcommand = true,
 )]
 struct Cli {

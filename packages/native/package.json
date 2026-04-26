@@ -1,7 +1,7 @@
 {
   "name": "@vscode-links/native",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "N-API binding around the Rust vscode-links-core. Drop-in resolve() for the VSIX, the picker, or any other Node consumer that wants the native code path.",
   "license": "MIT",
