@@ -1,0 +1,149 @@
+name: Native Release
+
+on:
+  push:
+    tags:
+      - native-v*
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            triple: linux-x64-gnu
+            runs-on: ubuntu-latest
+            cross: false
+          - target: aarch64-unknown-linux-gnu
+            triple: linux-arm64-gnu
+            runs-on: ubuntu-latest
+            cross: true
+          - target: x86_64-apple-darwin
+            triple: darwin-x64
+            runs-on: macos-13
+            cross: false
+          - target: aarch64-apple-darwin
+            triple: darwin-arm64
+            runs-on: macos-14
+            cross: false
+          - target: x86_64-pc-windows-msvc
+            triple: win32-x64-msvc
+            runs-on: windows-latest
+            cross: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+
+      - name: Install Zig (cross only)
+        if: matrix.cross
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Install cargo-zigbuild (cross only)
+        if: matrix.cross
+        run: cargo install --locked cargo-zigbuild
+
+      - name: Build N-API addon
+        shell: bash
+        run: |
+          if [ "${{ matrix.cross }}" = "true" ]; then
+            cargo zigbuild --release -p vscode-links-napi --target ${{ matrix.target }}
+          else
+            cargo build --release -p vscode-links-napi --target ${{ matrix.target }}
+          fi
+
+      - name: Stage addon
+        shell: bash
+        run: |
+          mkdir -p artefacts/${{ matrix.triple }}
+          cd target/${{ matrix.target }}/release
+          case "${{ matrix.target }}" in
+            *windows*)
+              cp vscode_links_napi.dll ../../../artefacts/${{ matrix.triple }}/vscode-links.${{ matrix.triple }}.node
+              ;;
+            *apple*)
+              cp libvscode_links_napi.dylib ../../../artefacts/${{ matrix.triple }}/vscode-links.${{ matrix.triple }}.node
+              ;;
+            *)
+              cp libvscode_links_napi.so ../../../artefacts/${{ matrix.triple }}/vscode-links.${{ matrix.triple }}.node
+              ;;
+          esac
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: addon-${{ matrix.triple }}
+          path: artefacts/${{ matrix.triple }}/*
+          if-no-files-found: error
+
+  publish:
+    name: publish to npm
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          registry-url: https://registry.npmjs.org
+
+      - name: Resolve version from tag
+        id: version
+        run: |
+          ref="${GITHUB_REF#refs/tags/native-v}"
+          echo "value=${ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Download all addon artefacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artefacts
+          pattern: addon-*
+
+      # actions/download-artifact lays each artifact under
+      # artefacts/<artifact-name>/...; flatten so the materialise
+      # script sees artefacts/<triple>/vscode-links.<triple>.node.
+      - name: Flatten artefact layout
+        run: |
+          for d in artefacts/addon-*; do
+            triple=$(basename "$d" | sed 's/^addon-//')
+            mv "$d" "artefacts/$triple"
+          done
+          ls artefacts
+
+      - name: Materialise per-arch packages
+        run: |
+          node packages/native/scripts/materialise-arch-packages.mjs \
+            --artefacts ./artefacts \
+            --out ./packages/native/dist \
+            --version ${{ steps.version.outputs.value }}
+
+      - name: Publish per-arch packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          for d in packages/native/dist/*/; do
+            (cd "$d" && npm publish --access public)
+          done
+
+      - name: Publish main package
+        working-directory: packages/native
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
