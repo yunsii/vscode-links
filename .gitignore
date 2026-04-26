@@ -11,3 +11,5 @@ logs
 node_modules
 temp
 packages/*/src/generated
+target
+
