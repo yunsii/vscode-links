@@ -89,6 +89,8 @@ importers:
 
   packages/core: {}
 
+  packages/native: {}
+
   packages/vsix:
     devDependencies:
       '@types/papaparse':
@@ -100,6 +102,9 @@ importers:
       '@vscode-links/core':
         specifier: workspace:*
         version: link:../core
+      '@vscode-links/native':
+        specifier: workspace:*
+        version: link:../native
       '@vscode/vsce':
         specifier: ^3.4.0
         version: 3.9.1
