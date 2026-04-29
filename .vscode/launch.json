@@ -12,7 +12,7 @@
       "outFiles": [
         "${workspaceFolder}/packages/vsix/dist/**/*.js"
       ],
-      "preLaunchTask": "npm: dev"
+      "preLaunchTask": "dev"
     }
   ]
 }

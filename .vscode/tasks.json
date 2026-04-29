@@ -4,9 +4,22 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "build native",
+      "type": "npm",
+      "script": "build:native",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "dev",
       "type": "npm",
       "script": "dev",
       "isBackground": true,
+      "dependsOn": "build native",
+      "dependsOrder": "sequence",
       "presentation": {
         "reveal": "never"
       },
