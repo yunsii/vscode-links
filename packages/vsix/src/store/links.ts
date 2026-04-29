@@ -3,6 +3,7 @@ import * as vscode from 'vscode'
 
 import { config } from '@/helpers/config'
 import { getErrorMessage } from '@/helpers/errors'
+import { watchGitState } from '@/helpers/git-watch'
 import { resolve } from '@/helpers/native-loader'
 import type { BaseLinkResource } from '@/helpers/native-loader'
 import { getCurrentFileRelativePath, getCurrentWorkspace } from '@/helpers/workspaces'
@@ -114,10 +115,22 @@ export class LinksStore {
       vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('links')) {
           this.clearCache()
+          this.loadResources().catch((err) => {
+            logger.error('Failed to reload after config change:', getErrorMessage(err))
+          })
         }
       }),
       vscode.workspace.onDidChangeWorkspaceFolders(() => {
         this.clearCache()
+        this.loadResources().catch((err) => {
+          logger.error('Failed to reload after workspace change:', getErrorMessage(err))
+        })
+      }),
+      ...watchGitState(() => {
+        this.clearCache()
+        this.loadResources().catch((err) => {
+          logger.error('Failed to reload after git HEAD change:', getErrorMessage(err))
+        })
       }),
     )
   }

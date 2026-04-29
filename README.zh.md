@@ -82,6 +82,8 @@
 
 <!-- commands -->
 
+> **切换分支时自动刷新：** 当内置的 `vscode.git` 扩展启用时（默认开启），仓库 `HEAD` 变化后链接会自动重新解析，`{{git.branch}}` 始终保持最新。如果你设置了 `"git.enabled": false`，或所用发行版未捆绑 Git 扩展，切换分支后需要手动执行 **Links: Refresh**。
+
 ## 配置
 
 <!-- configs -->

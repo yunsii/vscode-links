@@ -54,6 +54,12 @@ Usage notes
 - Use `_raw.{providerId}` to access the original provider fragment if you need provider-specific shapes that are not flattened or transformed by the engine.
 - If no provider matches the `repoUrl` or a provider throws, the engine silently continues and that provider's fields will be absent from the context (a warning is logged).
 
+Auto-refresh on git changes
+
+- The VS Code extension subscribes to the built-in `vscode.git` extension and re-resolves links whenever a repository's `HEAD` (branch or commit) changes, so templates that reference `git.branch` stay in sync with the editor's status bar.
+- Detection requires the built-in Git extension to be enabled. If you have set `"git.enabled": false` or are running a distribution that does not ship `vscode.git`, branch switches will not trigger an auto-refresh — run **Links: Refresh** (`links.refresh`) manually after switching branches.
+- The CLI (`vscode-links`) and Node addon (`@vscode-links/native`) read git state on every call, so they always reflect the current branch.
+
 Examples
 
 - Template using GitHub owner and repo:

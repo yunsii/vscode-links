@@ -93,6 +93,8 @@ Offline / air-gapped: grab the per-arch `.vsix` from the [latest GitHub Release]
 
 <!-- commands -->
 
+> **Auto-refresh on branch switch:** when the built-in `vscode.git` extension is enabled (the default), links re-resolve automatically as soon as `HEAD` changes, so `{{git.branch}}` stays in sync. If you've set `"git.enabled": false` or run a distribution without the Git extension, run **Links: Refresh** manually after switching branches.
+
 ## Configurations
 
 <!-- configs -->

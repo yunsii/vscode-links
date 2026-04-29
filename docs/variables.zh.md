@@ -54,6 +54,12 @@
 - 若需要访问 provider 返回的原始结构，可使用 `_raw.{providerId}`。
 - 如果没有 provider 匹配 `repoUrl` 或 provider 抛出异常，引擎会记录警告并继续，相关字段在上下文中将缺失。
 
+git 变更时的自动刷新
+
+- VS Code 扩展会订阅内置 `vscode.git` 扩展的仓库状态，仓库 `HEAD`（分支或 commit）变化时自动重新解析链接，确保模板里的 `git.branch` 与编辑器状态栏保持一致。
+- 自动刷新依赖内置 Git 扩展处于启用状态。如果你设置了 `"git.enabled": false`，或所用发行版未捆绑 `vscode.git`，切换分支后链接不会自动更新——请手动执行 **Links: Refresh** (`links.refresh`) 命令。
+- CLI (`vscode-links`) 和 Node 插件 (`@vscode-links/native`) 每次调用都会重新读取 git 状态，因此始终反映当前分支。
+
 示例
 
 - 使用 GitHub owner 与 repo：
