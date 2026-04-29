@@ -5,6 +5,7 @@ import { addCommandRefresh } from './entrypoints/command.refresh'
 import { setupStatusBarItemOpen } from './entrypoints/status-bar-item.open'
 import { setupViewLinks } from './entrypoints/view.links'
 import { extensionId, version } from './generated/meta'
+import { bootstrapLinksStore } from './store/links'
 import { logger } from './utils'
 
 const { activate, deactivate } = defineExtension(() => {
@@ -13,6 +14,7 @@ const { activate, deactivate } = defineExtension(() => {
   addCommandRefresh()
   setupViewLinks()
   setupStatusBarItemOpen()
+  bootstrapLinksStore()
 })
 
 export { activate, deactivate }

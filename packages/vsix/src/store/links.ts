@@ -159,8 +159,15 @@ export class LinksStore {
 // Create singleton instance
 export const linksStore = new LinksStore()
 
-// Auto-load resources and setup cache clearing on store creation (non-blocking)
-setTimeout(() => {
+// Bootstrap is intentionally NOT done at module load time anymore.
+// `setupAutoClearCache` and the helpers it spawns (e.g. watchGitState)
+// rely on `extensionContext.value` being set, which only happens inside
+// reactive-vscode's `defineExtension` activate callback. Calling them
+// from a top-level `setTimeout(0)` raced ahead of activate — when
+// extensionContext was still undefined, optional-chaining short-circuited
+// the subscriptions.push() and the watcher wiring args were never even
+// evaluated. Call `bootstrapLinksStore` from `defineExtension` instead.
+export function bootstrapLinksStore(): void {
   logger.info('Starting auto-load of link resources...')
   linksStore.loadResources()
     .then((resources) => {
@@ -175,4 +182,4 @@ setTimeout(() => {
     })
 
   linksStore.setupAutoClearCache()
-}, 0)
+}
