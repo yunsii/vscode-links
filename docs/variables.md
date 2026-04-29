@@ -56,8 +56,9 @@ Usage notes
 
 Auto-refresh on git changes
 
-- The VS Code extension subscribes to the built-in `vscode.git` extension and re-resolves links whenever a repository's `HEAD` (branch or commit) changes, so templates that reference `git.branch` stay in sync with the editor's status bar.
-- Detection requires the built-in Git extension to be enabled. If you have set `"git.enabled": false` or are running a distribution that does not ship `vscode.git`, branch switches will not trigger an auto-refresh — run **Links: Refresh** (`links.refresh`) manually after switching branches.
+- The VS Code extension resolves each workspace folder's real `.git` directory via `git rev-parse --absolute-git-dir` at startup and watches `HEAD` inside it. Branch switches in plain repos, worktrees, and submodules all re-resolve links automatically, so templates that reference `git.branch` stay in sync with the editor's status bar.
+- The watcher requires `git` to be on `PATH` — the same prerequisite the resolver already has. There is no dependency on the `vscode.git` extension; auto-refresh works even with `"git.enabled": false`.
+- If a workspace folder is not inside a git repository, that folder is silently skipped (the resolver also has nothing to render for it). Folders added later via **File → Add Folder to Workspace** are picked up automatically.
 - The CLI (`vscode-links`) and Node addon (`@vscode-links/native`) read git state on every call, so they always reflect the current branch.
 
 Examples

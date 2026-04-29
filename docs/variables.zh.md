@@ -56,8 +56,9 @@
 
 git 变更时的自动刷新
 
-- VS Code 扩展会订阅内置 `vscode.git` 扩展的仓库状态，仓库 `HEAD`（分支或 commit）变化时自动重新解析链接，确保模板里的 `git.branch` 与编辑器状态栏保持一致。
-- 自动刷新依赖内置 Git 扩展处于启用状态。如果你设置了 `"git.enabled": false`，或所用发行版未捆绑 `vscode.git`，切换分支后链接不会自动更新——请手动执行 **Links: Refresh** (`links.refresh`) 命令。
+- VS Code 扩展启动时会对每个工作区文件夹执行 `git rev-parse --absolute-git-dir` 解析出真实的 `.git` 目录，并监听其中的 `HEAD` 文件。普通仓库、worktree、submodule 切分支后链接均自动重新解析，模板里的 `git.branch` 始终与编辑器状态栏保持一致。
+- 监听只要求 `PATH` 中能找到 `git` 命令——这是解析器原本就有的前提。**不依赖** `vscode.git` 扩展；即使设置了 `"git.enabled": false`，自动刷新依然工作。
+- 如果某个工作区文件夹不在 git 仓库内，会被静默跳过（解析器本身在该文件夹下也无可渲染内容）。后续通过 **File → Add Folder to Workspace** 加入的文件夹会自动接入监听。
 - CLI (`vscode-links`) 和 Node 插件 (`@vscode-links/native`) 每次调用都会重新读取 git 状态，因此始终反映当前分支。
 
 示例
